@@ -1,0 +1,88 @@
+using UnityEngine;
+
+public class FireBall : MonoBehaviour
+{
+    private Vector3 core_rotation_velocity;
+    private Vector3 flare_rotation_velocity;
+    private float cnt_flare_spark_cycle;
+
+    [SerializeField]
+    [Tooltip("玉の残存時間")]
+    private float attack_ball_lifetime_sec = 1.5f;
+
+    [SerializeField]
+    [Tooltip("火の粉のプレハブ")]
+    private GameObject attack_spark_prefab;
+
+    [SerializeField]
+    [Tooltip("火の粉最大発射間隔")]
+    private float MAX_FLARE_SPARK_CYCLE = 0.3f;
+
+    [SerializeField]
+    [Tooltip("火の粉の発射速度")]
+    private float SPARK_SPEED = 3.0f;
+
+    [SerializeField]
+    [Tooltip("火の粉が出ない秒数")]
+    private float no_spark_sec = 0.2f;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        const float MAX_ROTATION_SPEED = 50.0f;
+        core_rotation_velocity = new Vector3(
+                                    Random.Range(-1.0f, 1.0f),
+                                    Random.Range(-1.0f, 1.0f),
+                                    Random.Range(-1.0f, 1.0f)
+                                    ).normalized * MAX_ROTATION_SPEED;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        this.transform.localEulerAngles += core_rotation_velocity * Time.deltaTime;
+        if (no_spark_sec > 0.0f)
+        {
+            no_spark_sec -= Time.deltaTime;
+        }
+        else
+        {
+            cnt_flare_spark_cycle += Time.deltaTime;
+            float r = Random.value;
+            if(r <= Mathf.Pow(cnt_flare_spark_cycle/MAX_FLARE_SPARK_CYCLE,3)){
+                SpawnFireSpark();
+                cnt_flare_spark_cycle = 0.0f;
+            }
+            if(this.transform.position.y <= -10){
+                Destroy(this.gameObject);
+            }
+        }
+        attack_ball_lifetime_sec -= Time.deltaTime;
+        if(attack_ball_lifetime_sec <= 0.0f)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision_object)
+    {
+        int FIELD_LAYER_INT = LayerMask.NameToLayer("Field");
+        int TARGET_LAYER_INT = LayerMask.NameToLayer("Target");
+        if(collision_object.gameObject.layer == FIELD_LAYER_INT || collision_object.gameObject.layer == TARGET_LAYER_INT){
+            Destroy(this.gameObject);
+        }
+    }
+
+    void SpawnFireSpark(){
+        Vector3 shot_position = this.transform.position;
+        GameObject firespark = Instantiate(attack_spark_prefab, shot_position, this.transform.rotation);
+        Rigidbody firespark_rigidbody = firespark.GetComponent<Rigidbody>();
+        Vector3 shot_velocity = new Vector3(
+            Random.Range(-1.0f,1.0f),
+            Random.Range(-1.0f,1.0f),
+            Random.Range(-1.0f,1.0f)
+        ).normalized * SPARK_SPEED;
+        firespark_rigidbody.linearVelocity = shot_velocity;
+        return;
+    }
+}
