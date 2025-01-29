@@ -87,6 +87,10 @@ public class StageManager : MonoBehaviour
         beat_cnt++;
         BEAT_LABEL.text = $"Beat : {beat_cnt}";
         SpawnTarget();
+        if (beat_cnt % 10 == 0)
+        {
+            SpawnTarget();
+        }
         return;
     }
 }

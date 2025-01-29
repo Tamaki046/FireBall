@@ -51,8 +51,6 @@ public class Player : MonoBehaviour
         }
         else
         {
-            //const int MOUSE_LEFT_BUTTON_ID = 0;
-            //if(Input.GetMouseButtonDown(MOUSE_LEFT_BUTTON_ID)){
             if (Input.GetButton("Fire1"))
             {
                 ShotFireball();
@@ -67,9 +65,9 @@ public class Player : MonoBehaviour
             Input.GetAxisRaw("Mouse Y")
         ) * CAMERA_SENSITIVITY;
         this.transform.rotation = Quaternion.Euler(
-            transform.rotation.eulerAngles.x,
-            transform.rotation.eulerAngles.y + mouse_input.x,
-            transform.rotation.eulerAngles.z
+            this.transform.rotation.eulerAngles.x,
+            this.transform.rotation.eulerAngles.y + mouse_input.x,
+            this.transform.rotation.eulerAngles.z
             );
         camera_transform.rotation = Quaternion.Euler(
             camera_transform.rotation.eulerAngles.x - mouse_input.y,

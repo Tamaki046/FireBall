@@ -22,6 +22,18 @@ public class Target : MonoBehaviour
     private GameObject PLAYER_GAMEOBJECT;
 
     [SerializeField]
+    [Tooltip("プレイヤーとの距離感")]
+    private float DISTANCE_FROM_PLAYER;
+
+    [SerializeField]
+    [Tooltip("距離の許容率")]
+    private float DISTANCE_ALLOW_RATE;
+
+    [SerializeField]
+    [Tooltip("移動速度")]
+    private float MOVE_SPEED;
+
+    [SerializeField]
     [Tooltip("放つ火の玉")]
     private GameObject ATTACK_BALL_PREFAB;
 
@@ -60,6 +72,7 @@ public class Target : MonoBehaviour
     void Update()
     {
         LookAtPlayer();
+        ChasePlayer();
         cnt_shot_cycle += Time.deltaTime;
         if (cnt_shot_cycle >= SHOT_CYCLE_SEC)
         {
@@ -73,6 +86,31 @@ public class Target : MonoBehaviour
         Vector3 vector_to_player = PLAYER_GAMEOBJECT.transform.position - this.transform.position;
         Quaternion quaternion_to_player = Quaternion.LookRotation(vector_to_player);
         this.transform.rotation = quaternion_to_player;
+        return;
+    }
+
+    void ChasePlayer()
+    {
+        float MIN_DISTANCE = DISTANCE_FROM_PLAYER * (1.0f - DISTANCE_ALLOW_RATE);
+        float MAX_DISTANCE = DISTANCE_FROM_PLAYER * (1.0f + DISTANCE_ALLOW_RATE);
+        Vector3 direction_to_player = new Vector3(
+            PLAYER_GAMEOBJECT.transform.position.x - this.transform.position.x,
+            0.0f,
+            PLAYER_GAMEOBJECT.transform.position.z - this.transform.position.z
+        ).normalized;
+        float distance_from_player = Vector3.Distance(PLAYER_GAMEOBJECT.transform.position, this.transform.position);
+        if (distance_from_player < MIN_DISTANCE)
+        {
+            direction_to_player *= -1.0f;
+        }else if (distance_from_player > MAX_DISTANCE)
+        {
+            direction_to_player *= 1.0f;
+        }
+        else
+        {
+            direction_to_player *= 0.0f;
+        }
+        this.transform.position += direction_to_player * MOVE_SPEED * Time.deltaTime;
         return;
     }
 
