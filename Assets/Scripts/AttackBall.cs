@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class FireBall : MonoBehaviour
@@ -66,9 +67,12 @@ public class FireBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision_object)
     {
-        int FIELD_LAYER_INT = LayerMask.NameToLayer("Field");
-        int TARGET_LAYER_INT = LayerMask.NameToLayer("Target");
-        if(collision_object.gameObject.layer == FIELD_LAYER_INT || collision_object.gameObject.layer == TARGET_LAYER_INT){
+        int[] COLLISION_LAYERS = {
+            LayerMask.NameToLayer("Field"),
+            LayerMask.NameToLayer("Target"),
+            LayerMask.NameToLayer("Player")
+        };
+        if(COLLISION_LAYERS.Contains(collision_object.gameObject.layer)){
             Destroy(this.gameObject);
         }
     }
