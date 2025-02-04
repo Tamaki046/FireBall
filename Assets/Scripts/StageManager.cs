@@ -45,7 +45,7 @@ public class StageManager : MonoBehaviour
     }
 
     void SetFieldTiles(){
-        const float TILE_SIZE = 2.0f;
+        const float TILE_SIZE = 0.20f;
         Vector3 tile_position;
         Transform PARENT_TRANSFORM = this.transform;
         float ORIGIN_COORDINATE;

@@ -676,7 +676,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldtile_prefab: {fileID: 4242535083073437893, guid: 108a7d4e4c0691740979d78473335a73, type: 3}
-  STAGE_SIZE: 15
+  STAGE_SIZE: 100
   TARGET_PREFAB: {fileID: 4779092718859683304, guid: 58ddef8b3ffd834499b5eddafc37b723, type: 3}
   SPAWN_RANGE_MIN: {x: -15, y: 5, z: 15}
   SPAWN_RANGE_MAX: {x: 15, y: 2, z: 15}
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   MOVE_SPEED: 5
   SHOT_SPEED: 50
   SHOT_CYCLE: 0.2
-  CAMERA_SENSITIVITY: 5
+  CAMERA_SENSITIVITY: 20
 --- !u!136 &1780676344
 CapsuleCollider:
   m_ObjectHideFlags: 0

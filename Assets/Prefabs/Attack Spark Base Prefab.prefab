@@ -130,11 +130,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7849082018862230549}
+  - component: {fileID: 8201537578442470123}
   - component: {fileID: 2016120273993958361}
   - component: {fileID: 1397983654549795847}
   - component: {fileID: 6169723472331264750}
   - component: {fileID: 5048552625636891928}
-  - component: {fileID: 8201537578442470123}
   m_Layer: 9
   m_Name: Attack Spark Base Prefab
   m_TagString: Untagged
@@ -158,6 +158,20 @@ Transform:
   - {fileID: 5563732771314086390}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8201537578442470123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166446956371083020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb1d98d2d51e204da44e1417249ad5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  object_lifetime_sec: 1.5
+  BREAK_RADIUS: 0
 --- !u!33 &2016120273993958361
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -259,15 +273,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8201537578442470123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166446956371083020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bb1d98d2d51e204da44e1417249ad5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
