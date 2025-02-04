@@ -53,6 +53,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
+      propertyPath: BREAK_RADIUS
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: no_spark_sec
       value: 0.1
       objectReference: {fileID: 0}

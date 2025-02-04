@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1595321609463099185}
+  - component: {fileID: 2489627094100814448}
   - component: {fileID: 1462087397207733593}
   - component: {fileID: 5676886975949131951}
   - component: {fileID: 5221227180848950431}
-  - component: {fileID: 2489627094100814448}
+  - component: {fileID: 3216847890605098039}
   m_Layer: 7
   m_Name: Field Tile
   m_TagString: Untagged
@@ -30,11 +31,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 1, z: 0.2}
+  m_LocalScale: {x: 0.02, y: 1, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2489627094100814448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4242535083073437893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d7ae8f86423fc44ca59ccc395f12dbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  REPAIR_SEC: 3
+  BROKEN_PARTICLE: {fileID: 3104573739313014187, guid: 9d3f4ab8dd4be014384fe43bf70b1336, type: 3}
 --- !u!33 &1462087397207733593
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -110,17 +125,30 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &2489627094100814448
-MonoBehaviour:
+--- !u!54 &3216847890605098039
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4242535083073437893}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d7ae8f86423fc44ca59ccc395f12dbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RESPAWN_SEC: 10
-  BROKEN_PARTICLE: {fileID: 3104573739313014187, guid: 9d3f4ab8dd4be014384fe43bf70b1336, type: 3}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

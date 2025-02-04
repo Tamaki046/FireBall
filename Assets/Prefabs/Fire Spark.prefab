@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1166446956371083020, guid: 746160fb439fd164b920654a61492e33, type: 3}
       propertyPath: m_Name
-      value: Attack Spark
+      value: Fire Spark
       objectReference: {fileID: 0}
     - target: {fileID: 7849082018862230549, guid: 746160fb439fd164b920654a61492e33, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51,6 +51,10 @@ PrefabInstance:
     - target: {fileID: 7849082018862230549, guid: 746160fb439fd164b920654a61492e33, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8201537578442470123, guid: 746160fb439fd164b920654a61492e33, type: 3}
+      propertyPath: BREAK_RADIUS
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,15 +1,11 @@
 using System.Linq;
 using UnityEngine;
 
-public class FireBall : MonoBehaviour
+public class AttackBall : AttackObject
 {
     private Vector3 core_rotation_velocity;
     private Vector3 flare_rotation_velocity;
     private float cnt_flare_spark_cycle;
-
-    [SerializeField]
-    [Tooltip("玉の残存時間")]
-    private float attack_ball_lifetime_sec = 1.5f;
 
     [SerializeField]
     [Tooltip("火の粉のプレハブ")]
@@ -27,7 +23,6 @@ public class FireBall : MonoBehaviour
     [Tooltip("火の粉が出ない秒数")]
     private float no_spark_sec = 0.2f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         const float MAX_ROTATION_SPEED = 50.0f;
@@ -36,10 +31,10 @@ public class FireBall : MonoBehaviour
                                     Random.Range(-1.0f, 1.0f),
                                     Random.Range(-1.0f, 1.0f)
                                     ).normalized * MAX_ROTATION_SPEED;
+        return;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         this.transform.localEulerAngles += core_rotation_velocity * Time.deltaTime;
         if (no_spark_sec > 0.0f)
@@ -58,23 +53,26 @@ public class FireBall : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
-        attack_ball_lifetime_sec -= Time.deltaTime;
-        if(attack_ball_lifetime_sec <= 0.0f)
-        {
-            Destroy(this.gameObject);
-        }
+        base.Update();
+        return;
     }
 
-    void OnCollisionEnter(Collision collision_object)
+    protected override void OnCollisionEnter(Collision collision_object)
     {
+        int TARGET_LAYER = LayerMask.NameToLayer("Target");
         int[] COLLISION_LAYERS = {
             LayerMask.NameToLayer("Field"),
             LayerMask.NameToLayer("Target"),
             LayerMask.NameToLayer("Player")
         };
         if(COLLISION_LAYERS.Contains(collision_object.gameObject.layer)){
+            if(collision_object.gameObject.layer != TARGET_LAYER)
+            {
+                base.BreakField();
+            }
             Destroy(this.gameObject);
         }
+        return;
     }
 
     void SpawnFireSpark(){
