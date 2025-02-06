@@ -6,30 +6,46 @@ public class Player : MonoBehaviour
     private Rigidbody player_rigidbody;
     private CharacterController character_controller;
     private Transform camera_transform;
+    private Light player_light;
     private float shot_lest_time = 0.0f;
+    private bool is_knockbacking = false;
+    private Vector3 knockback_velocity = Vector3.zero;
+    private bool is_active = true;
 
     [SerializeField]
     [Tooltip("発射する火の玉のプレハブ")]
     private GameObject fireball_prefab;
     
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("移動速度")]
     private float MOVE_SPEED = 1.0f;
     
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("玉の発射速度")]
     private float SHOT_SPEED = 10.0f;
 
     [SerializeField]
+    [Range(0.3f,2.0f)]
     [Tooltip("玉の連射間隔")]
     private float SHOT_CYCLE = 0.1f;
 
     [SerializeField]
+    [Range(0.1f,100.0f)]
     [Tooltip("カメラ感度")]
     private float CAMERA_SENSITIVITY = 10.0f;
 
-    private bool is_knockbacking = false;
-    private Vector3 knockback_velocity = Vector3.zero;
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("気絶時のカメラ感度低下度")]
+    private float FAINTING_CAMERA_SLOW_RATE = 0.1f;
+
+    [SerializeField]
+    [Tooltip("気絶時の光の色")]
+    private Color FAINTING_LIGHT_COLOR;
+
+    private float camera_slow_rate = 0.0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,11 +54,31 @@ public class Player : MonoBehaviour
         player_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         character_controller = this.GetComponent<CharacterController>();
         camera_transform = this.transform.Find("Main Camera").transform;
+        player_light = this.transform.Find("Point Light").GetComponent<Light>();
+        SetEventAction();
+    }
+
+    void SetEventAction()
+    {
+        StageManager.TimeUp += SetActiveFalse;
+    }
+
+    void SetActiveFalse()
+    {
+        is_active = false; 
+        player_rigidbody.linearVelocity = Vector3.zero;
+        player_rigidbody.isKinematic = true;
+        return;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!is_active)
+        {
+            return;
+        }
+        MoveCamera();
         if (is_knockbacking)
         {
             ShakeCamera();
@@ -58,10 +94,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            MoveCamera();
-
             MoveCharacter();
-
             if (shot_lest_time > 0.0f)
             {
                 shot_lest_time -= Time.deltaTime;
@@ -81,7 +114,7 @@ public class Player : MonoBehaviour
         Vector2 mouse_input = new Vector2(
             Input.GetAxisRaw("Mouse X"),
             Input.GetAxisRaw("Mouse Y")
-        ) * CAMERA_SENSITIVITY;
+        ) * CAMERA_SENSITIVITY * (1.0f - camera_slow_rate);
         this.transform.rotation = Quaternion.Euler(
             this.transform.rotation.eulerAngles.x,
             this.transform.rotation.eulerAngles.y + mouse_input.x,
@@ -105,19 +138,6 @@ public class Player : MonoBehaviour
         character_controller.Move(velocity * Time.deltaTime);
         return;
     }
-
-    //RigidBodyだけで実装（若干カクつく）
-    /*
-    void MoveCharacter()
-    {
-        Vector3 front_back_input = this.transform.forward * Input.GetAxis("Vertical");
-        Vector3 right_left_input = this.transform.right * Input.GetAxis("Horizontal");
-        Vector3 velocity = (front_back_input + right_left_input).normalized * MOVE_SPEED;
-        velocity.y = player_rigidbody.linearVelocity.y;
-        player_rigidbody.linearVelocity = velocity;
-        return;
-    }
-    */
 
     void ShotFireball(){
         Vector3 SHOT_DIRECTION = new Vector3(
@@ -159,7 +179,8 @@ public class Player : MonoBehaviour
 
     void KnockBack(Vector3 hit_direction)
     {
-        Debug.Log("KnockBack!");
+        camera_slow_rate = FAINTING_CAMERA_SLOW_RATE;
+        player_light.color = FAINTING_LIGHT_COLOR;
         is_knockbacking = true;
         float FORCE_POWER = 5.0f;
         Vector3 knockback_direction = new Vector3(
@@ -178,7 +199,9 @@ public class Player : MonoBehaviour
     void FinishKnockBack()
     {
         is_knockbacking = false;
+        player_light.color = new Color(1, 1, 1);
         camera_transform.localPosition = Vector3.zero;
+        camera_slow_rate = 0.0f;
         return;
     }
 }
