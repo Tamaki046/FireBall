@@ -1,4 +1,6 @@
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 public class Target : MonoBehaviour
 {
 
@@ -22,14 +24,17 @@ public class Target : MonoBehaviour
     private GameObject PLAYER_GAMEOBJECT;
 
     [SerializeField]
+    [Range(0.1f,10.0f)]
     [Tooltip("プレイヤーとの距離感")]
     private float DISTANCE_FROM_PLAYER;
 
     [SerializeField]
+    [Range(0.0f,1.0f)]
     [Tooltip("距離の許容率")]
     private float DISTANCE_ALLOW_RATE;
 
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("移動速度")]
     private float MOVE_SPEED;
 
@@ -38,12 +43,14 @@ public class Target : MonoBehaviour
     private GameObject ATTACK_BALL_PREFAB;
 
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("火の玉の速度")]
     private float SHOT_SPEED = 10.0f;
 
     private float cnt_shot_cycle = 0.0f;
 
     [SerializeField]
+    [Range(1.0f,5.0f)]
     [Tooltip("火の玉の発射間隔")]
     private float SHOT_CYCLE_SEC = 2.0f;
 
@@ -52,32 +59,49 @@ public class Target : MonoBehaviour
     private GameObject DEAD_OBJECT_PREFAB;
 
     [SerializeField]
+    [Range(0,10)]
     [Tooltip("死亡時にオブジェクトを生成する数")]
     private int DEAD_OBJECT_NUM = 10;
 
     [SerializeField]
+    [Range(0.1f,10.0f)]
     [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
 
     public static event System.Action DeadEvent;
+    private bool is_active = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
+        SetEventAction();
+    }
+
+    void SetEventAction()
+    {
+        StageManager.TimeUp += SetActiveFalse;
+    }
+
+    void SetActiveFalse()
+    {
+        is_active = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        LookAtPlayer();
-        ChasePlayer();
-        cnt_shot_cycle += Time.deltaTime;
-        if (cnt_shot_cycle >= SHOT_CYCLE_SEC)
+        if (is_active)
         {
-            cnt_shot_cycle -= SHOT_CYCLE_SEC;
-            ShotFireBall();
+            LookAtPlayer();
+            ChasePlayer();
+            cnt_shot_cycle += Time.deltaTime;
+            if (cnt_shot_cycle >= SHOT_CYCLE_SEC)
+            {
+                cnt_shot_cycle -= SHOT_CYCLE_SEC;
+                ShotFireBall();
+            }
         }
     }
 

@@ -3,10 +3,12 @@ using UnityEngine;
 public class Null_Particle : MonoBehaviour
 {
     [SerializeField]
+    [Range(0.1f,1.0f)]
     [Tooltip("パーティクルの残存時間最小値（秒）")]
     private float LIFETIME_SEC_MIN;
 
     [SerializeField]
+    [Range(0.1f,1.0f)]
     [Tooltip("パーティクルの残存時間最大値（秒）")]
     private float LIFETIME_SEC_MAX;
 

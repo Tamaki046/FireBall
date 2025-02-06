@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   object_lifetime_sec: 1.5
-  BREAK_RADIUS: 0
+  BREAK_RADIUS: 0.1
 --- !u!33 &2016120273993958361
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -12,19 +12,23 @@ public class AttackBall : AttackObject
     private GameObject attack_spark_prefab;
 
     [SerializeField]
+    [Range(0.1f,1.0f)]
     [Tooltip("‰Î‚Ì•²Å‘å”­ŽËŠÔŠu")]
     private float MAX_FLARE_SPARK_CYCLE = 0.3f;
 
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("‰Î‚Ì•²‚Ì”­ŽË‘¬“x")]
     private float SPARK_SPEED = 3.0f;
 
     [SerializeField]
+    [Min(0.1f)]
     [Tooltip("‰Î‚Ì•²‚ªo‚È‚¢•b”")]
     private float no_spark_sec = 0.2f;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         const float MAX_ROTATION_SPEED = 50.0f;
         core_rotation_velocity = new Vector3(
                                     Random.Range(-1.0f, 1.0f),
@@ -36,7 +40,12 @@ public class AttackBall : AttackObject
 
     protected override void Update()
     {
+        base.Update();
         this.transform.localEulerAngles += core_rotation_velocity * Time.deltaTime;
+        if (!is_active)
+        {
+            return;
+        }
         if (no_spark_sec > 0.0f)
         {
             no_spark_sec -= Time.deltaTime;
@@ -53,7 +62,6 @@ public class AttackBall : AttackObject
                 Destroy(this.gameObject);
             }
         }
-        base.Update();
         return;
     }
 

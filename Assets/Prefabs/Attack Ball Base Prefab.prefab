@@ -170,9 +170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05de9dd9bc894564baf3ed5ab9bc009d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  object_lifetime_sec: 1.5
+  BREAK_RADIUS: 0.1
   attack_spark_prefab: {fileID: 1166446956371083020, guid: 565fdbd7006364743a17c47b4d21c712, type: 3}
   MAX_FLARE_SPARK_CYCLE: 0.1
   SPARK_SPEED: 3
+  no_spark_sec: 0.2
 --- !u!33 &8513597358600808361
 MeshFilter:
   m_ObjectHideFlags: 0
