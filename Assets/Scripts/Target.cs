@@ -82,6 +82,7 @@ public class Target : MonoBehaviour
     void SetEventAction()
     {
         StageManager.TimeUp += SetActiveFalse;
+        Player.GameOver += SetActiveFalse;
     }
 
     void SetActiveFalse()

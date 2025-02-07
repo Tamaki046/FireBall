@@ -20,6 +20,10 @@ public class FieldObject : MonoBehaviour
     [Tooltip("床破壊時のパーティクルオブジェクト")]
     private GameObject BROKEN_PARTICLE;
 
+    private bool is_staying_player = false;
+    private bool is_active = true;
+    private bool is_timeup = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,6 +35,13 @@ public class FieldObject : MonoBehaviour
     void SetEventAction()
     {
         AttackObject.BreakEvent += BreakTile;
+        StageManager.TimeUp += SetActiveFalse;
+        Player.GameOver += SetActiveFalse;
+    }
+    void SetActiveFalse()
+    {
+        is_timeup = true;
+        return;
     }
 
     void BreakTile(Vector3 break_position, float break_radius)
@@ -49,16 +60,45 @@ public class FieldObject : MonoBehaviour
 
     IEnumerator BreakAndRepair(float distance_from_outside)
     {
-        object_collider.enabled = false;
-        object_renderer.enabled = false;
+        SetFieldActive(false);
         yield return new WaitForSeconds(REPAIR_SEC + distance_from_outside * DISTANCE_TIME_RATE);
-        object_collider.enabled = true;
-        object_renderer.enabled = true;
+        SetFieldActive(!is_timeup);
     }
 
-    // Update is called once per frame
+    void SetFieldActive(bool is_active)
+    {
+        this.is_active = is_active;
+        if (!is_staying_player)
+        {
+            object_collider.isTrigger = !is_active;
+            object_renderer.enabled = is_active;
+        }
+        return;
+    }
+
+    private void OnTriggerEnter(Collider collider_object)
+    {
+        int PLAYER_LAYER = LayerMask.NameToLayer("Player");
+        if(collider_object.gameObject.layer == PLAYER_LAYER)
+        {
+            is_staying_player = true;
+        }
+    }
     void Update()
     {
-        
+        if (is_active && !object_renderer.enabled)
+        {
+            SetFieldActive(true);
+        }
     }
+
+    private void OnTriggerExit(Collider collider_object)
+    {
+        int PLAYER_LAYER = LayerMask.NameToLayer("Player");
+        if (collider_object.gameObject.layer == PLAYER_LAYER)
+        {
+            is_staying_player = false;
+        }
+    }
+
 }

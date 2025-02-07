@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -45,7 +46,14 @@ public class Player : MonoBehaviour
     [Tooltip("‹Câ‚ÌŒõ‚ÌF")]
     private Color FAINTING_LIGHT_COLOR;
 
+    [SerializeField]
+    [Range(-20.0f,0.0f)]
+    [Tooltip("—‰º”»’è‚Æ‚È‚éYÀ•W")]
+    private float DROP_POSITION_Y;
+
     private float camera_slow_rate = 0.0f;
+
+    public static event System.Action GameOver;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -107,6 +115,11 @@ public class Player : MonoBehaviour
                     shot_lest_time = SHOT_CYCLE;
                 }
             }
+        }
+        if (this.transform.position.y <= DROP_POSITION_Y)
+        {
+            GameOver.Invoke();
+            SetActiveFalse();
         }
     }
 

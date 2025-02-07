@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class StageManager : MonoBehaviour
@@ -37,21 +40,25 @@ public class StageManager : MonoBehaviour
     private Vector3 SPAWN_RANGE_MAX;
 
     [SerializeField]
-    [Tooltip("撃破数ラベル")]
-    private TextMeshProUGUI BEAT_LABEL;
+    [Tooltip("撃破数テキスト")]
+    private TextMeshProUGUI BEAT_TEXT;
 
     [SerializeField]
-    [Tooltip("タイマーラベル")]
-    private TextMeshProUGUI TIMER_LABEL;
+    [Tooltip("タイマーテキスト")]
+    private TextMeshProUGUI TIMER_TEXT;
 
     [SerializeField]
-    [Range(0.1f,99.9f)]
+    [Range(0.1f,99.0f)]
     [Tooltip("制限時間")]
     private float TIME_SEC;
 
+    [SerializeField]
+    [Tooltip("終了ラベル")]
+    private GameObject FINISH_LABEL;
+
     public static event System.Action TimeUp;
     private float left_time_sec = 0.0f;
-    private bool is_timeup = false;
+    private bool is_game_end = false;
 
     private int beat_cnt = 0;
 
@@ -65,16 +72,15 @@ public class StageManager : MonoBehaviour
 
     private void Update()
     {
-        if (!is_timeup)
+        if (!is_game_end)
         {
             left_time_sec -= Time.deltaTime;
             if (left_time_sec <= 0.0f)
             {
-                is_timeup = true;
                 left_time_sec = 0.0f;
                 TimeUpGame();
             }
-            TIMER_LABEL.text = $"{left_time_sec:.02}";
+            TIMER_TEXT.text = String.Format("{0:00}", Mathf.Ceil(left_time_sec));
         }
     }
 
@@ -121,12 +127,13 @@ public class StageManager : MonoBehaviour
     void SetEventAction()
     {
         Target.DeadEvent += DeadTarget;
+        Player.GameOver += FinishGame;
     }
 
     public void DeadTarget()
     {
         beat_cnt++;
-        BEAT_LABEL.text = $"Beat : {beat_cnt}";
+        BEAT_TEXT.text = String.Format("{0:000}",beat_cnt);
         SpawnTarget();
         if (beat_cnt % 10 == 0)
         {
@@ -135,9 +142,17 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+    void FinishGame()
+    {
+        is_game_end = true;
+        FINISH_LABEL.SetActive(true);
+        return;
+    }
+
     private void TimeUpGame()
     {
         TimeUp.Invoke();
+        FinishGame();
         return;
     }
 }
