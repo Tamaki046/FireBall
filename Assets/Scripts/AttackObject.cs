@@ -25,6 +25,7 @@ public class AttackObject : MonoBehaviour
     protected void SetEventAction()
     {
         StageManager.TimeUp += SetActiveFalse;
+        Player.GameOver += SetActiveFalse;
     }
 
     void SetActiveFalse()
