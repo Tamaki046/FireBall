@@ -56,6 +56,29 @@ public class StageManager : MonoBehaviour
     [Tooltip("終了ラベル")]
     private GameObject FINISH_LABEL;
 
+    [SerializeField]
+    [Tooltip("床破壊時のパーティクルオブジェクト")]
+    private GameObject BREAK_PARTICLE;
+
+    [SerializeField]
+    [Range(1, 10)]
+    [Tooltip("床破壊パーティクルのベース数")]
+    private int PARTICLE_BASE_NUM;
+
+    [SerializeField]
+    [Range(0.0f, 100.0f)]
+    [Tooltip("床破壊効果音のベース速度")]
+    private float PARTICLE_BASE_SPEED;
+
+    [SerializeField]
+    [Tooltip("床破壊時の音")]
+    private AudioClip BREAK_SE;
+
+    [SerializeField]
+    [Range(0.0f,1.0f)]
+    [Tooltip("床破壊効果音のベースボリューム")]
+    private float BREAK_BASE_VOLUME;
+
     public static event System.Action TimeUp;
     private float left_time_sec = 0.0f;
     private bool is_game_end = false;
@@ -126,8 +149,51 @@ public class StageManager : MonoBehaviour
 
     void SetEventAction()
     {
+        AttackObject.BreakEvent += GenerateBreakEffect;
         Target.DeadEvent += DeadTarget;
         Player.GameOver += FinishGame;
+        return;
+    }
+
+    void GenerateBreakEffect(Vector3 break_position, float break_radius)
+    {
+        GenerateBreakSE(break_position, break_radius);
+        GenerateBreakParticle(break_position, break_radius);
+        return;
+    }
+
+    void GenerateBreakSE(Vector3 break_position, float break_radius)
+    {
+        GameObject break_audio_object = new GameObject("BreakAudioSource");
+        break_audio_object.transform.position = break_position;
+
+        AudioSource break_audio_source = break_audio_object.AddComponent<AudioSource>();
+        break_audio_source.clip = BREAK_SE;
+        const float BLEND_3D = 1.0f;
+        break_audio_source.spatialBlend = BLEND_3D;
+        break_audio_source.volume = BREAK_BASE_VOLUME * break_radius;
+        break_audio_source.Play();
+
+        Destroy(break_audio_object, BREAK_SE.length);
+        return;
+    }
+
+    void GenerateBreakParticle(Vector3 break_position, float break_radius)
+    {
+        int generate_num = PARTICLE_BASE_NUM * (int)Mathf.Round(break_radius);
+        for(int i = 0; i < generate_num; i++)
+        {
+            Vector3 direction = new Vector3(
+                Random.Range(-1.0f, 1.0f),
+                Random.Range(0.0f, 1.0f),
+                Random.Range(-1.0f, 1.0f)
+                ).normalized;
+            GameObject particle = Instantiate(BREAK_PARTICLE, break_position, this.transform.rotation);
+            Rigidbody particle_rigidbody = particle.GetComponent<Rigidbody>();
+            Vector3 particle_velocity = direction * Random.Range(0.0f,PARTICLE_BASE_SPEED*break_radius);
+            particle_rigidbody.linearVelocity = particle_velocity;
+        }
+        return;
     }
 
     public void DeadTarget()

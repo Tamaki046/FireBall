@@ -5,31 +5,16 @@ public class Target : MonoBehaviour
 {
 
     private bool isDead = false;
-
-    [SerializeField]
-    [Tooltip("リスポーン座標の最小値")]
-    private Vector3 MIN_POSITION = new Vector3(
-        -10.0f,
-        2.0f,
-        -10.0f
-    );
-    [SerializeField]
-    [Tooltip("リスポーン座標の最大値")]
-    private Vector3 MAX_POSITION = new Vector3(
-        10.0f,
-        5.0f,
-        10.0f
-    );
-
     private GameObject PLAYER_GAMEOBJECT;
+    private AudioSource fire_throw_se;
 
     [SerializeField]
-    [Range(0.1f,10.0f)]
+    [Range(0.1f, 10.0f)]
     [Tooltip("プレイヤーとの距離感")]
     private float DISTANCE_FROM_PLAYER;
 
     [SerializeField]
-    [Range(0.0f,1.0f)]
+    [Range(0.0f, 1.0f)]
     [Tooltip("距離の許容率")]
     private float DISTANCE_ALLOW_RATE;
 
@@ -50,7 +35,7 @@ public class Target : MonoBehaviour
     private float cnt_shot_cycle = 0.0f;
 
     [SerializeField]
-    [Range(1.0f,5.0f)]
+    [Range(1.0f, 5.0f)]
     [Tooltip("火の玉の発射間隔")]
     private float SHOT_CYCLE_SEC = 2.0f;
 
@@ -59,12 +44,12 @@ public class Target : MonoBehaviour
     private GameObject DEAD_OBJECT_PREFAB;
 
     [SerializeField]
-    [Range(0,10)]
+    [Range(0, 10)]
     [Tooltip("死亡時にオブジェクトを生成する数")]
     private int DEAD_OBJECT_NUM = 10;
 
     [SerializeField]
-    [Range(0.1f,10.0f)]
+    [Range(0.1f, 10.0f)]
     [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
 
@@ -76,6 +61,7 @@ public class Target : MonoBehaviour
     {
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
+        fire_throw_se = this.GetComponent<AudioSource>();
         SetEventAction();
     }
 
@@ -127,7 +113,8 @@ public class Target : MonoBehaviour
         if (distance_from_player < MIN_DISTANCE)
         {
             direction_to_player *= -1.0f;
-        }else if (distance_from_player > MAX_DISTANCE)
+        }
+        else if (distance_from_player > MAX_DISTANCE)
         {
             direction_to_player *= 1.0f;
         }
@@ -142,27 +129,19 @@ public class Target : MonoBehaviour
     void ShotFireBall()
     {
         Vector3 SHOT_DIRECTION = (PLAYER_GAMEOBJECT.transform.position - this.transform.position).normalized;
-        Vector3 shot_position = this.transform.position + SHOT_DIRECTION*2.0f;
+        Vector3 shot_position = this.transform.position + SHOT_DIRECTION * 2.0f;
         GameObject fireball = Instantiate(ATTACK_BALL_PREFAB, shot_position, this.transform.rotation);
         Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
         Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
         fireball_rigidbody.linearVelocity = shot_velocity;
+        fire_throw_se.Play();
         return;
-    }
-
-    Vector3 GenerateRandomPosition()
-    {
-        return new Vector3(
-            Random.Range(MIN_POSITION.x, MAX_POSITION.x),
-            Random.Range(MIN_POSITION.y, MAX_POSITION.y),
-            Random.Range(MIN_POSITION.z, MAX_POSITION.z)
-        );
     }
 
     void OnCollisionEnter(Collision collision_object)
     {
         int FIREBALL_LAYER_INT = LayerMask.NameToLayer("Attack Ball");
-        if((collision_object.gameObject.layer == FIREBALL_LAYER_INT) && (!isDead))
+        if ((collision_object.gameObject.layer == FIREBALL_LAYER_INT) && (!isDead))
         {
             isDead = true;
             Dead();
@@ -179,7 +158,7 @@ public class Target : MonoBehaviour
 
     void EmitDeadObjects()
     {
-        for(int i = 0; i < DEAD_OBJECT_NUM; i++)
+        for (int i = 0; i < DEAD_OBJECT_NUM; i++)
         {
             Vector3 direction = new Vector3(
                 Random.Range(-1.0f, 1.0f),

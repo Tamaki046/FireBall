@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private Rigidbody player_rigidbody;
     private CharacterController character_controller;
+    private AudioSource fire_throw_se;
     private Transform camera_transform;
     private Light player_light;
     private float shot_lest_time = 0.0f;
@@ -61,6 +62,7 @@ public class Player : MonoBehaviour
         player_rigidbody = this.GetComponent<Rigidbody>();
         player_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         character_controller = this.GetComponent<CharacterController>();
+        fire_throw_se = this.GetComponent<AudioSource>();
         camera_transform = this.transform.Find("Main Camera").transform;
         player_light = this.transform.Find("Point Light").GetComponent<Light>();
         SetEventAction();
@@ -163,6 +165,7 @@ public class Player : MonoBehaviour
         Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
         Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
         fireball_rigidbody.linearVelocity = shot_velocity;
+        fire_throw_se.Play();
         return;
     }
 
