@@ -16,10 +16,6 @@ public class FieldObject : MonoBehaviour
     [Tooltip("中心からの距離に応じた復旧時間の加算レート")]
     private float DISTANCE_TIME_RATE = 0.01f;
 
-    [SerializeField]
-    [Tooltip("床破壊時のパーティクルオブジェクト")]
-    private GameObject BROKEN_PARTICLE;
-
     private bool is_staying_player = false;
     private bool is_active = true;
     private bool is_timeup = false;
