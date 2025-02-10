@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 135635246}
   - component: {fileID: 135635245}
   - component: {fileID: 135635244}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: TimeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 477462813}
   - component: {fileID: 477462815}
   - component: {fileID: 477462814}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: ClockIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +587,7 @@ GameObject:
   - component: {fileID: 482743065}
   - component: {fileID: 482743067}
   - component: {fileID: 482743066}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: GhostIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,7 +663,7 @@ GameObject:
   - component: {fileID: 622420868}
   - component: {fileID: 622420867}
   - component: {fileID: 622420866}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -966,18 +966,28 @@ MonoBehaviour:
   fieldblock_prefab_black: {fileID: 4481241546105433825, guid: 2d09691ce94fc074f8afbf350cb33d9f, type: 3}
   STAGE_SIZE: 50
   STAGE_COLOR_CYCLE: 5
+  BREAK_PARTICLE: {fileID: 3104573739313014187, guid: 9d3f4ab8dd4be014384fe43bf70b1336, type: 3}
+  PARTICLE_BASE_NUM: 3
+  BREAK_SE: {fileID: 8300000, guid: c122728b2156cc844ae9276c8719cd03, type: 3}
+  BREAK_BASE_VOLUME: 0.1
+  PARTICLE_BASE_SPEED: 1
   TARGET_PREFAB: {fileID: 4779092718859683304, guid: 58ddef8b3ffd834499b5eddafc37b723, type: 3}
   SPAWN_RANGE_MIN: {x: -15, y: 2, z: -15}
   SPAWN_RANGE_MAX: {x: 15, y: 5, z: 15}
+  DEAD_FLASH_PREFAB: {fileID: 4011169017060848677, guid: 668b57550f6916e41b44c63db76c0dd0, type: 3}
+  DEAD_FLASH_COLOR: {r: 1, g: 0, b: 0.9953165, a: 1}
+  DEAD_FLASH_INTENSITY: 10
+  DEAD_FLASH_LIFETIME_SEC: 2
+  BEAT_SE: {fileID: 8300000, guid: c8722e9e870eee84d92967df04614825, type: 3}
+  BEAT_SOUND_VOLUME: 1
   BEAT_TEXT: {fileID: 1028133665}
   TIMER_TEXT: {fileID: 135635244}
   TIME_SEC: 60
   FINISH_LABEL: {fileID: 2129910009}
-  BREAK_PARTICLE: {fileID: 3104573739313014187, guid: 9d3f4ab8dd4be014384fe43bf70b1336, type: 3}
-  PARTICLE_BASE_NUM: 3
-  PARTICLE_BASE_SPEED: 1
-  BREAK_SE: {fileID: 8300000, guid: c122728b2156cc844ae9276c8719cd03, type: 3}
-  BREAK_BASE_VOLUME: 0.2
+  BGM_CLIP: {fileID: 8300000, guid: 665b859db702da44688c987c2c2a1961, type: 3}
+  BGM_VOLUME: 0.05
+  FINISH_SE: {fileID: 8300000, guid: 94852f78861858248b62f80f5064e0f4, type: 3}
+  FINISH_SE_VOLUME: 0.3
 --- !u!1 &1000003795
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,7 +999,7 @@ GameObject:
   - component: {fileID: 1000003796}
   - component: {fileID: 1000003798}
   - component: {fileID: 1000003797}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: FinishText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1125,7 +1135,7 @@ GameObject:
   - component: {fileID: 1028133664}
   - component: {fileID: 1028133666}
   - component: {fileID: 1028133665}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: BeatCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1261,7 +1271,7 @@ GameObject:
   - component: {fileID: 1213715145}
   - component: {fileID: 1213715147}
   - component: {fileID: 1213715146}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1490,7 +1500,7 @@ GameObject:
   - component: {fileID: 1706915008}
   - component: {fileID: 1706915010}
   - component: {fileID: 1706915009}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Reticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1569,8 +1579,7 @@ GameObject:
   - component: {fileID: 1780676344}
   - component: {fileID: 1780676342}
   - component: {fileID: 1780676348}
-  - component: {fileID: 1780676349}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1617,13 +1626,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireball_prefab: {fileID: 2798246805326216883, guid: a4a2fe5e48575fa468d8a9d91dc702ac, type: 3}
-  MOVE_SPEED: 5
   SHOT_SPEED: 50
   SHOT_CYCLE: 0.3
-  CAMERA_SENSITIVITY: 20
+  SHOT_SE: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
+  SHOT_VOLUME: 0.5
   FAINTING_CAMERA_SLOW_RATE: 0.6
   FAINTING_LIGHT_COLOR: {r: 0.8090267, g: 0, b: 1, a: 1}
+  HIT_SE: {fileID: 8300000, guid: 3eddceafcecb8d74eb9cc061b18bebe4, type: 3}
+  HIT_VOLUME: 0.5
+  MOVE_SPEED: 5
+  CAMERA_SENSITIVITY: 20
   DROP_POSITION_Y: -5
+  FALL_SE: {fileID: 8300000, guid: 2f63cfe44d06f104f9a6f641d59c0a43, type: 3}
+  FALL_VOLUME: 0.2
 --- !u!136 &1780676344
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1742,103 +1757,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!82 &1780676349
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1780676341}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
-  m_Resource: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 50
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &1862572621
 GameObject:
   m_ObjectHideFlags: 0
@@ -2066,7 +1984,7 @@ GameObject:
   - component: {fileID: 1966616280}
   - component: {fileID: 1966616282}
   - component: {fileID: 1966616281}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: InfoBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2253,7 +2171,7 @@ GameObject:
   - component: {fileID: 2129910010}
   - component: {fileID: 2129910012}
   - component: {fileID: 2129910011}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: FinishBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

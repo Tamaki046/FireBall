@@ -1,13 +1,18 @@
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.PlayerLoop;
 public class Target : MonoBehaviour
 {
 
     private bool isDead = false;
     private GameObject PLAYER_GAMEOBJECT;
-    private AudioSource fire_throw_se;
+    private float cnt_shot_cycle = 0.0f;
+    private bool is_active = true;
+    public static event System.Action<Vector3> DeadEvent;
 
+    [Header("移動情報")]
     [SerializeField]
     [Range(0.1f, 10.0f)]
     [Tooltip("プレイヤーとの距離感")]
@@ -23,6 +28,7 @@ public class Target : MonoBehaviour
     [Tooltip("移動速度")]
     private float MOVE_SPEED;
 
+    [Header("攻撃情報")]
     [SerializeField]
     [Tooltip("放つ火の玉")]
     private GameObject ATTACK_BALL_PREFAB;
@@ -32,13 +38,21 @@ public class Target : MonoBehaviour
     [Tooltip("火の玉の速度")]
     private float SHOT_SPEED = 10.0f;
 
-    private float cnt_shot_cycle = 0.0f;
-
     [SerializeField]
     [Range(1.0f, 5.0f)]
     [Tooltip("火の玉の発射間隔")]
     private float SHOT_CYCLE_SEC = 2.0f;
 
+    [SerializeField]
+    [Tooltip("火の玉発射効果音")]
+    private AudioClip SHOT_SE;
+
+    [SerializeField]
+    [Range(0.0f,1.0f)]
+    [Tooltip("火の玉発射効果音ボリューム")]
+    private float SHOT_VOLUME;
+
+    [Header("死亡時情報")]
     [SerializeField]
     [Tooltip("死亡時に生成するオブジェクト")]
     private GameObject DEAD_OBJECT_PREFAB;
@@ -53,15 +67,11 @@ public class Target : MonoBehaviour
     [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
 
-    public static event System.Action DeadEvent;
-    private bool is_active = true;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
-        fire_throw_se = this.GetComponent<AudioSource>();
         SetEventAction();
     }
 
@@ -130,11 +140,22 @@ public class Target : MonoBehaviour
     {
         Vector3 SHOT_DIRECTION = (PLAYER_GAMEOBJECT.transform.position - this.transform.position).normalized;
         Vector3 shot_position = this.transform.position + SHOT_DIRECTION * 2.0f;
-        GameObject fireball = Instantiate(ATTACK_BALL_PREFAB, shot_position, this.transform.rotation);
+        GameObject fireball = Instantiate(ATTACK_BALL_PREFAB, shot_position, Quaternion.identity);
         Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
         Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
         fireball_rigidbody.linearVelocity = shot_velocity;
-        fire_throw_se.Play();
+        PlaySE(SHOT_SE, SHOT_VOLUME);
+        return;
+    }
+    void PlaySE(AudioClip se_clip, float base_volume)
+    {
+        AudioSource se_source = this.AddComponent<AudioSource>();
+        se_source.clip = se_clip;
+        se_source.volume = base_volume;
+        const float BLEND_3D = 1.0f;
+        se_source.spatialBlend = BLEND_3D;
+        se_source.Play();
+        Destroy(se_source, se_clip.length);
         return;
     }
 
@@ -152,7 +173,7 @@ public class Target : MonoBehaviour
     void Dead()
     {
         EmitDeadObjects();
-        DeadEvent.Invoke();
+        DeadEvent.Invoke(this.transform.position);
         Destroy(this.gameObject);
     }
 
@@ -162,10 +183,10 @@ public class Target : MonoBehaviour
         {
             Vector3 direction = new Vector3(
                 Random.Range(-1.0f, 1.0f),
-                Random.Range(-1.0f, 1.0f),
+                Random.Range(1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f)
                 ).normalized;
-            GameObject deadobject = Instantiate(DEAD_OBJECT_PREFAB, this.transform.position, this.transform.rotation);
+            GameObject deadobject = Instantiate(DEAD_OBJECT_PREFAB, this.transform.position+direction*0.1f, Quaternion.identity);
             Rigidbody deadobject_rigidbody = deadobject.GetComponent<Rigidbody>();
             Vector3 emit_velocity = direction * DEAD_OBJECT_EMIT_SPEED;
             deadobject_rigidbody.linearVelocity = emit_velocity;

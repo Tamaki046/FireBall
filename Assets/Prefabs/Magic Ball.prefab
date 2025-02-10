@@ -66,11 +66,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: BREAK_RADIUS
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: no_spark_sec
-      value: 5
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: attack_spark_prefab

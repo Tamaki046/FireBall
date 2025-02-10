@@ -4,7 +4,6 @@ using UnityEngine;
 public class AttackBall : AttackObject
 {
     private Vector3 core_rotation_velocity;
-    private Vector3 flare_rotation_velocity;
     private float cnt_flare_spark_cycle;
 
     [SerializeField]
@@ -85,7 +84,7 @@ public class AttackBall : AttackObject
 
     void SpawnFireSpark(){
         Vector3 shot_position = this.transform.position;
-        GameObject firespark = Instantiate(attack_spark_prefab, shot_position, this.transform.rotation);
+        GameObject firespark = Instantiate(attack_spark_prefab, shot_position, Quaternion.identity);
         Rigidbody firespark_rigidbody = firespark.GetComponent<Rigidbody>();
         Vector3 shot_velocity = new Vector3(
             Random.Range(-1.0f,1.0f),

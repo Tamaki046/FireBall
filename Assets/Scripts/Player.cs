@@ -1,4 +1,5 @@
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,22 +7,19 @@ public class Player : MonoBehaviour
 {
     private Rigidbody player_rigidbody;
     private CharacterController character_controller;
-    private AudioSource fire_throw_se;
     private Transform camera_transform;
     private Light player_light;
     private float shot_lest_time = 0.0f;
     private bool is_knockbacking = false;
     private Vector3 knockback_velocity = Vector3.zero;
     private bool is_active = true;
+    private float camera_slow_rate = 0.0f;
+    public static event System.Action GameOver;
 
+    [Header("攻撃情報")]
     [SerializeField]
     [Tooltip("発射する火の玉のプレハブ")]
     private GameObject fireball_prefab;
-    
-    [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("移動速度")]
-    private float MOVE_SPEED = 1.0f;
     
     [SerializeField]
     [Min(0.1f)]
@@ -34,10 +32,15 @@ public class Player : MonoBehaviour
     private float SHOT_CYCLE = 0.1f;
 
     [SerializeField]
-    [Range(0.1f,100.0f)]
-    [Tooltip("カメラ感度")]
-    private float CAMERA_SENSITIVITY = 10.0f;
+    [Tooltip("発射時の効果音")]
+    private AudioClip SHOT_SE;
 
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("発射時の効果音ボリューム")]
+    private float SHOT_VOLUME;
+
+    [Header("気絶情報")]
     [SerializeField]
     [Range(0.0f, 1.0f)]
     [Tooltip("気絶時のカメラ感度低下度")]
@@ -48,13 +51,39 @@ public class Player : MonoBehaviour
     private Color FAINTING_LIGHT_COLOR;
 
     [SerializeField]
+    [Tooltip("被弾時の効果音")]
+    private AudioClip HIT_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("被弾時の効果音ボリューム")]
+    private float HIT_VOLUME;
+
+    [Header("その他")]
+    [SerializeField]
+    [Min(0.1f)]
+    [Tooltip("移動速度")]
+    private float MOVE_SPEED = 1.0f;
+
+    [SerializeField]
+    [Range(0.1f, 100.0f)]
+    [Tooltip("カメラ感度")]
+    private float CAMERA_SENSITIVITY = 10.0f;
+
+    [SerializeField]
     [Range(-20.0f,0.0f)]
     [Tooltip("落下判定となるY座標")]
     private float DROP_POSITION_Y;
 
-    private float camera_slow_rate = 0.0f;
+    [SerializeField]
+    [Tooltip("落下時の効果音")]
+    private AudioClip FALL_SE;
 
-    public static event System.Action GameOver;
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("落下時の効果音ボリューム")]
+    private float FALL_VOLUME;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -62,7 +91,6 @@ public class Player : MonoBehaviour
         player_rigidbody = this.GetComponent<Rigidbody>();
         player_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         character_controller = this.GetComponent<CharacterController>();
-        fire_throw_se = this.GetComponent<AudioSource>();
         camera_transform = this.transform.Find("Main Camera").transform;
         player_light = this.transform.Find("Point Light").GetComponent<Light>();
         SetEventAction();
@@ -81,7 +109,6 @@ public class Player : MonoBehaviour
         return;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!is_active)
@@ -120,6 +147,7 @@ public class Player : MonoBehaviour
         }
         if (this.transform.position.y <= DROP_POSITION_Y)
         {
+            PlaySE(FALL_SE, FALL_VOLUME);
             GameOver.Invoke();
             SetActiveFalse();
         }
@@ -161,11 +189,21 @@ public class Player : MonoBehaviour
             this.transform.forward.z * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad))
         ).normalized;
         Vector3 shot_position = this.transform.position + SHOT_DIRECTION;
-        GameObject fireball = Instantiate(fireball_prefab, shot_position, this.transform.rotation);
+        GameObject fireball = Instantiate(fireball_prefab, shot_position, Quaternion.identity);
         Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
         Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
         fireball_rigidbody.linearVelocity = shot_velocity;
-        fire_throw_se.Play();
+        PlaySE(SHOT_SE,SHOT_VOLUME);
+        return;
+    }
+
+    void PlaySE(AudioClip se_clip, float base_volume)
+    {
+        AudioSource se_source = this.AddComponent<AudioSource>();
+        se_source.clip = se_clip;
+        se_source.volume = base_volume;
+        se_source.Play();
+        Destroy(se_source, se_clip.length);
         return;
     }
 
@@ -209,6 +247,7 @@ public class Player : MonoBehaviour
         character_controller.Move(knockback_velocity * Time.deltaTime);
         const float KNOCKBACK_SEC = 2.0f;
         Invoke(nameof(FinishKnockBack), KNOCKBACK_SEC);
+        PlaySE(HIT_SE,HIT_VOLUME);
         return;
     }
 
