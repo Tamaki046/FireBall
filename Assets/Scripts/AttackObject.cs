@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AttackObject : MonoBehaviour
 {
+    protected bool is_active = true;
     public static event System.Action<Vector3,float> BreakEvent;
 
     [SerializeField]
@@ -15,7 +16,6 @@ public class AttackObject : MonoBehaviour
     [Tooltip("”j‰ó”¼Œa")]
     protected float BREAK_RADIUS;
 
-    protected bool is_active = true;
 
     protected virtual void Start()
     {

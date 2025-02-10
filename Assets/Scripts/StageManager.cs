@@ -9,6 +9,12 @@ using Random = UnityEngine.Random;
 
 public class StageManager : MonoBehaviour
 {
+    private float left_time_sec = 0.0f;
+    private bool is_game_end = false;
+    private int beat_cnt = 0;
+    public static event System.Action TimeUp;
+
+    [Header("フィールド情報")]
     [SerializeField]
     [Tooltip("フィールドブロックのプレハブ（白）")]
     private GameObject fieldblock_prefab_white;
@@ -27,6 +33,31 @@ public class StageManager : MonoBehaviour
     [Tooltip("ステージの色の周期")]
     private int STAGE_COLOR_CYCLE = 5;
 
+    [Header("床破壊情報")]
+    [SerializeField]
+    [Tooltip("床破壊時のパーティクルオブジェクト")]
+    private GameObject BREAK_PARTICLE;
+
+    [SerializeField]
+    [Range(1, 10)]
+    [Tooltip("床破壊パーティクルのベース数")]
+    private int PARTICLE_BASE_NUM;
+
+    [SerializeField]
+    [Tooltip("床破壊時の音")]
+    private AudioClip BREAK_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("床破壊効果音のベースボリューム")]
+    private float BREAK_BASE_VOLUME;
+
+    [SerializeField]
+    [Range(0.0f, 100.0f)]
+    [Tooltip("床破壊パーティクルのベース速度")]
+    private float PARTICLE_BASE_SPEED;
+
+    [Header("敵キャラクター情報")]
     [SerializeField]
     [Tooltip("生成する敵キャラクターのプレハブ")]
     private GameObject TARGET_PREFAB;
@@ -39,6 +70,34 @@ public class StageManager : MonoBehaviour
     [Tooltip("敵キャラクターの生成範囲の最大値")]
     private Vector3 SPAWN_RANGE_MAX;
 
+    [SerializeField]
+    [Tooltip("敵死亡時の光の色")]
+    private GameObject DEAD_FLASH_PREFAB;
+
+    [SerializeField]
+    [Tooltip("敵死亡時の光の色")]
+    private Color DEAD_FLASH_COLOR;
+
+    [SerializeField]
+    [Range(0.0f,10.0f)]
+    [Tooltip("敵死亡時の光の強さ")]
+    private float DEAD_FLASH_INTENSITY;
+
+    [SerializeField]
+    [Range(0.0f, 5.0f)]
+    [Tooltip("敵死亡時の光の残存秒数")]
+    private float DEAD_FLASH_LIFETIME_SEC;
+
+    [SerializeField]
+    [Tooltip("敵撃破時の音")]
+    private AudioClip BEAT_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("敵撃破時の音のベースボリューム")]
+    private float BEAT_SOUND_VOLUME;
+
+    [Header("UI情報")]
     [SerializeField]
     [Tooltip("撃破数テキスト")]
     private TextMeshProUGUI BEAT_TEXT;
@@ -57,39 +116,29 @@ public class StageManager : MonoBehaviour
     private GameObject FINISH_LABEL;
 
     [SerializeField]
-    [Tooltip("床破壊時のパーティクルオブジェクト")]
-    private GameObject BREAK_PARTICLE;
-
-    [SerializeField]
-    [Range(1, 10)]
-    [Tooltip("床破壊パーティクルのベース数")]
-    private int PARTICLE_BASE_NUM;
-
-    [SerializeField]
-    [Range(0.0f, 100.0f)]
-    [Tooltip("床破壊効果音のベース速度")]
-    private float PARTICLE_BASE_SPEED;
-
-    [SerializeField]
-    [Tooltip("床破壊時の音")]
-    private AudioClip BREAK_SE;
+    [Tooltip("BGM")]
+    private AudioClip BGM_CLIP;
 
     [SerializeField]
     [Range(0.0f,1.0f)]
-    [Tooltip("床破壊効果音のベースボリューム")]
-    private float BREAK_BASE_VOLUME;
+    [Tooltip("BGMボリューム")]
+    private float BGM_VOLUME;
 
-    public static event System.Action TimeUp;
-    private float left_time_sec = 0.0f;
-    private bool is_game_end = false;
+    [SerializeField]
+    [Tooltip("終了時効果音")]
+    private AudioClip FINISH_SE;
 
-    private int beat_cnt = 0;
+    [SerializeField]
+    [Range(0.0f,1.0f)]
+    [Tooltip("終了時効果音のボリューム")]
+    private float FINISH_SE_VOLUME;
 
     void Start()
     {
         SetFieldTiles();
         SpawnTarget();
         SetEventAction();
+        PlayBGM(BGM_CLIP, BGM_VOLUME);
         left_time_sec = TIME_SEC;
     }
 
@@ -126,14 +175,26 @@ public class StageManager : MonoBehaviour
                 );
                 if (((i / STAGE_COLOR_CYCLE) + (j / STAGE_COLOR_CYCLE)) % 2 == 0)
                 {
-                    Instantiate(fieldblock_prefab_white, tile_position, PARENT_TRANSFORM.rotation, PARENT_TRANSFORM);
+                    Instantiate(fieldblock_prefab_white, tile_position, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(fieldblock_prefab_black, tile_position, PARENT_TRANSFORM.rotation, PARENT_TRANSFORM);
+                    Instantiate(fieldblock_prefab_black, tile_position, Quaternion.identity);
                 }
             }
         }
+    }
+
+    void PlayBGM(AudioClip bgm_clip, float bgm_volume)
+    {
+        GameObject audio_object = new GameObject("TempAudioSource");
+
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = bgm_clip;
+        audio_source.volume = bgm_volume;
+        audio_source.loop = true;
+        audio_source.Play();
+        return;
     }
 
     void SpawnTarget()
@@ -143,7 +204,7 @@ public class StageManager : MonoBehaviour
                 Random.Range(SPAWN_RANGE_MIN.y, SPAWN_RANGE_MAX.y),
                 Random.Range(SPAWN_RANGE_MIN.z, SPAWN_RANGE_MAX.z)
             );
-        GameObject spawn_target_object = Instantiate(TARGET_PREFAB, this.transform.position+spawn_position, this.transform.rotation);
+        GameObject spawn_target_object = Instantiate(TARGET_PREFAB, this.transform.position+spawn_position, Quaternion.identity);
         return;
     }
 
@@ -157,24 +218,28 @@ public class StageManager : MonoBehaviour
 
     void GenerateBreakEffect(Vector3 break_position, float break_radius)
     {
-        GenerateBreakSE(break_position, break_radius);
+        PlaySE(BREAK_SE,break_position, break_radius*BREAK_BASE_VOLUME,true);
         GenerateBreakParticle(break_position, break_radius);
         return;
     }
 
-    void GenerateBreakSE(Vector3 break_position, float break_radius)
+    void PlaySE(AudioClip se_clip,Vector3 se_position, float se_volume, bool is_3d)
     {
-        GameObject break_audio_object = new GameObject("BreakAudioSource");
-        break_audio_object.transform.position = break_position;
+        GameObject audio_object = new GameObject("TempAudioSource");
+        audio_object.transform.position = se_position;
 
-        AudioSource break_audio_source = break_audio_object.AddComponent<AudioSource>();
-        break_audio_source.clip = BREAK_SE;
-        const float BLEND_3D = 1.0f;
-        break_audio_source.spatialBlend = BLEND_3D;
-        break_audio_source.volume = BREAK_BASE_VOLUME * break_radius;
-        break_audio_source.Play();
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = se_clip;
+        audio_source.volume = se_volume;
+        float blend_3d = 0.0f;
+        if (is_3d)
+        {
+            blend_3d = 1.0f;
+        }
+        audio_source.spatialBlend = blend_3d;
+        audio_source.Play();
 
-        Destroy(break_audio_object, BREAK_SE.length);
+        Destroy(audio_object, se_clip.length);
         return;
     }
 
@@ -188,7 +253,7 @@ public class StageManager : MonoBehaviour
                 Random.Range(0.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f)
                 ).normalized;
-            GameObject particle = Instantiate(BREAK_PARTICLE, break_position, this.transform.rotation);
+            GameObject particle = Instantiate(BREAK_PARTICLE, break_position, Quaternion.identity);
             Rigidbody particle_rigidbody = particle.GetComponent<Rigidbody>();
             Vector3 particle_velocity = direction * Random.Range(0.0f,PARTICLE_BASE_SPEED*break_radius);
             particle_rigidbody.linearVelocity = particle_velocity;
@@ -196,10 +261,12 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    public void DeadTarget()
+    public void DeadTarget(Vector3 dead_position)
     {
         beat_cnt++;
         BEAT_TEXT.text = String.Format("{0:000}",beat_cnt);
+        PlaySE(BEAT_SE,dead_position,BEAT_SOUND_VOLUME,true);
+        FlashDeadLight(dead_position);
         SpawnTarget();
         if (beat_cnt % 10 == 0)
         {
@@ -208,8 +275,19 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+
+    void FlashDeadLight(Vector3 dead_position)
+    {
+        Vector3 flash_position = dead_position;
+        GameObject dead_flash_object = Instantiate(DEAD_FLASH_PREFAB, dead_position, Quaternion.identity);
+        dead_flash_object.transform.position = flash_position;
+        Destroy(dead_flash_object, DEAD_FLASH_LIFETIME_SEC);
+        return;
+    }
+
     void FinishGame()
     {
+        PlaySE(FINISH_SE, Vector3.zero, FINISH_SE_VOLUME, false);
         is_game_end = true;
         FINISH_LABEL.SetActive(true);
         return;
