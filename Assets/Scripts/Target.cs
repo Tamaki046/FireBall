@@ -39,9 +39,14 @@ public class Target : MonoBehaviour
     private float SHOT_SPEED = 10.0f;
 
     [SerializeField]
-    [Range(1.0f, 5.0f)]
+    [Range(0.1f, 99.9f)]
     [Tooltip("‰Î‚Ì‹Ê‚Ì”­ŽËŠÔŠu")]
     private float SHOT_CYCLE_SEC = 2.0f;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("‰Î‚Ì‹Ê‚Ì”­ŽËŠÔŠu‚Ì—”‰Á”")]
+    private float SHOT_CYCLE_RANDOM_RATE;
 
     [SerializeField]
     [Tooltip("‰Î‚Ì‹Ê”­ŽËŒø‰Ê‰¹")]
@@ -73,6 +78,12 @@ public class Target : MonoBehaviour
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
         SetEventAction();
+        cnt_shot_cycle = CalcShotCycle();
+    }
+
+    float CalcShotCycle()
+    {
+        return SHOT_CYCLE_SEC * (1.0f + Random.Range(0.0f, SHOT_CYCLE_RANDOM_RATE));
     }
 
     void SetEventAction()
@@ -93,11 +104,11 @@ public class Target : MonoBehaviour
         {
             LookAtPlayer();
             ChasePlayer();
-            cnt_shot_cycle += Time.deltaTime;
-            if (cnt_shot_cycle >= SHOT_CYCLE_SEC)
+            cnt_shot_cycle -= Time.deltaTime;
+            if (cnt_shot_cycle <= 0.0f)
             {
-                cnt_shot_cycle -= SHOT_CYCLE_SEC;
                 ShotFireBall();
+                cnt_shot_cycle += CalcShotCycle();
             }
         }
     }
@@ -172,21 +183,21 @@ public class Target : MonoBehaviour
 
     void Dead()
     {
-        EmitDeadObjects();
+        EmitDeadObjects(this.transform.position);
         DeadEvent.Invoke(this.transform.position);
         Destroy(this.gameObject);
     }
 
-    void EmitDeadObjects()
+    void EmitDeadObjects(Vector3 dead_position)
     {
         for (int i = 0; i < DEAD_OBJECT_NUM; i++)
         {
             Vector3 direction = new Vector3(
                 Random.Range(-1.0f, 1.0f),
-                Random.Range(1.0f, 1.0f),
+                Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f)
                 ).normalized;
-            GameObject deadobject = Instantiate(DEAD_OBJECT_PREFAB, this.transform.position+direction*0.1f, Quaternion.identity);
+            GameObject deadobject = Instantiate(DEAD_OBJECT_PREFAB, dead_position+direction*0.1f, Quaternion.identity);
             Rigidbody deadobject_rigidbody = deadobject.GetComponent<Rigidbody>();
             Vector3 emit_velocity = direction * DEAD_OBJECT_EMIT_SPEED;
             deadobject_rigidbody.linearVelocity = emit_velocity;

@@ -159,8 +159,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 60
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 477639a691f32564299a6cc63768f17c, type: 2}
+  m_sharedMaterial: {fileID: 458015892215355505, guid: 477639a691f32564299a6cc63768f17c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -6.238098, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -253,7 +253,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 45, y: 0}
-  m_SizeDelta: {x: 42, y: 50}
+  m_SizeDelta: {x: 46, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &330585543
 GameObject:
@@ -405,7 +405,7 @@ GameObject:
   - component: {fileID: 416598172}
   - component: {fileID: 416598171}
   - component: {fileID: 416598170}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,7 +421,7 @@ Transform:
   m_GameObject: {fileID: 416598168}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalPosition: {x: 0, y: 15, z: 0}
   m_LocalScale: {x: 50, y: 5, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -610,7 +610,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -78, y: 0}
+  m_AnchoredPosition: {x: -86, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &482743066
@@ -767,7 +767,7 @@ GameObject:
   - component: {fileID: 812056301}
   - component: {fileID: 812056300}
   - component: {fileID: 812056299}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -783,7 +783,7 @@ Transform:
   m_GameObject: {fileID: 812056297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -20}
+  m_LocalPosition: {x: 0, y: 0, z: -15}
   m_LocalScale: {x: 50, y: 50, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -972,8 +972,8 @@ MonoBehaviour:
   BREAK_BASE_VOLUME: 0.1
   PARTICLE_BASE_SPEED: 1
   TARGET_PREFAB: {fileID: 4779092718859683304, guid: 58ddef8b3ffd834499b5eddafc37b723, type: 3}
-  SPAWN_RANGE_MIN: {x: -15, y: 2, z: -15}
-  SPAWN_RANGE_MAX: {x: 15, y: 5, z: 15}
+  SPAWN_RANGE_MIN: {x: -10, y: 2, z: -10}
+  SPAWN_RANGE_MAX: {x: 10, y: 4, z: 10}
   DEAD_FLASH_PREFAB: {fileID: 4011169017060848677, guid: 668b57550f6916e41b44c63db76c0dd0, type: 3}
   DEAD_FLASH_COLOR: {r: 1, g: 0, b: 0.9953165, a: 1}
   DEAD_FLASH_INTENSITY: 10
@@ -983,6 +983,7 @@ MonoBehaviour:
   BEAT_TEXT: {fileID: 1028133665}
   TIMER_TEXT: {fileID: 135635244}
   TIME_SEC: 60
+  ADD_TARGET_CYCLE_SEC: 20
   FINISH_LABEL: {fileID: 2129910009}
   BGM_CLIP: {fileID: 8300000, guid: 665b859db702da44688c987c2c2a1961, type: 3}
   BGM_VOLUME: 0.05
@@ -1047,8 +1048,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Finish
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 477639a691f32564299a6cc63768f17c, type: 2}
+  m_sharedMaterial: {fileID: 458015892215355505, guid: 477639a691f32564299a6cc63768f17c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1113,7 +1114,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1000003798
@@ -1158,8 +1159,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -10, y: 0}
-  m_SizeDelta: {x: 63, y: 50}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 80, y: 50}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1028133665
 MonoBehaviour:
@@ -1183,8 +1184,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 000
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 477639a691f32564299a6cc63768f17c, type: 2}
+  m_sharedMaterial: {fileID: 458015892215355505, guid: 477639a691f32564299a6cc63768f17c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1215,7 +1216,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 4
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1393,7 +1394,7 @@ GameObject:
   - component: {fileID: 1370101996}
   - component: {fileID: 1370101995}
   - component: {fileID: 1370101994}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1409,7 +1410,7 @@ Transform:
   m_GameObject: {fileID: 1370101992}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 0, z: 0}
+  m_LocalPosition: {x: 15, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 50, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1629,11 +1630,12 @@ MonoBehaviour:
   SHOT_SPEED: 50
   SHOT_CYCLE: 0.3
   SHOT_SE: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
-  SHOT_VOLUME: 0.5
+  SHOT_VOLUME: 0.2
   FAINTING_CAMERA_SLOW_RATE: 0.6
   FAINTING_LIGHT_COLOR: {r: 0.8090267, g: 0, b: 1, a: 1}
   HIT_SE: {fileID: 8300000, guid: 3eddceafcecb8d74eb9cc061b18bebe4, type: 3}
-  HIT_VOLUME: 0.5
+  INVINCIBLE_SEC: 1
+  HIT_VOLUME: 0.2
   MOVE_SPEED: 5
   CAMERA_SENSITIVITY: 20
   DROP_POSITION_Y: -5
@@ -1769,7 +1771,7 @@ GameObject:
   - component: {fileID: 1862572625}
   - component: {fileID: 1862572624}
   - component: {fileID: 1862572623}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1785,7 +1787,7 @@ Transform:
   m_GameObject: {fileID: 1862572621}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: 0, z: 0}
+  m_LocalPosition: {x: -15, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 50, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1877,7 +1879,7 @@ GameObject:
   - component: {fileID: 1938468668}
   - component: {fileID: 1938468667}
   - component: {fileID: 1938468666}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1893,7 +1895,7 @@ Transform:
   m_GameObject: {fileID: 1938468664}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalPosition: {x: 0, y: 0, z: 15}
   m_LocalScale: {x: 50, y: 50, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2012,7 +2014,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -10}
-  m_SizeDelta: {x: 210, y: 50}
+  m_SizeDelta: {x: 220, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1966616281
 MonoBehaviour:
@@ -2064,7 +2066,7 @@ GameObject:
   - component: {fileID: 2004070728}
   - component: {fileID: 2004070727}
   - component: {fileID: 2004070726}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wall (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2080,7 +2082,7 @@ Transform:
   m_GameObject: {fileID: 2004070724}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -20, z: 0}
+  m_LocalPosition: {x: 0, y: -15, z: 0}
   m_LocalScale: {x: 50, y: 5, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []

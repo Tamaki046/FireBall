@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private Light player_light;
     private float shot_lest_time = 0.0f;
     private bool is_knockbacking = false;
+    private bool is_hittable = true;
     private Vector3 knockback_velocity = Vector3.zero;
     private bool is_active = true;
     private float camera_slow_rate = 0.0f;
@@ -55,6 +56,11 @@ public class Player : MonoBehaviour
     private AudioClip HIT_SE;
 
     [SerializeField]
+    [Range(0.0f,99.0f)]
+    [Tooltip("îÌíeå„ÇÃñ≥ìGéûä‘")]
+    private float INVINCIBLE_SEC;
+
+    [SerializeField]
     [Range(0.0f, 1.0f)]
     [Tooltip("îÌíeéûÇÃå¯â âπÉ{ÉäÉÖÅ[ÉÄ")]
     private float HIT_VOLUME;
@@ -85,7 +91,6 @@ public class Player : MonoBehaviour
     private float FALL_VOLUME;
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         player_rigidbody = this.GetComponent<Rigidbody>();
@@ -209,11 +214,10 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter(Collision collision_object)
     {
-        int[] COLLISION_LAYERS = {
-            LayerMask.NameToLayer("Attack Ball")
-        };
-        if (COLLISION_LAYERS.Contains(collision_object.gameObject.layer))
+        int ENEMY_BALL_LAYERS = LayerMask.NameToLayer("Enemy Ball");
+        if (collision_object.gameObject.layer == ENEMY_BALL_LAYERS && is_hittable)
         {
+            is_hittable = false;
             KnockBack(collision_object.transform.position - this.transform.position);
         }
     }
@@ -257,6 +261,13 @@ public class Player : MonoBehaviour
         player_light.color = new Color(1, 1, 1);
         camera_transform.localPosition = Vector3.zero;
         camera_slow_rate = 0.0f;
+        Invoke(nameof(FinishInvincible), INVINCIBLE_SEC);
+        return;
+    }
+
+    void FinishInvincible()
+    {
+        is_hittable = true;
         return;
     }
 }

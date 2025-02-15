@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 public class StageManager : MonoBehaviour
 {
     private float left_time_sec = 0.0f;
+    private float next_target_add_sec = 0.0f;
     private bool is_game_end = false;
     private int beat_cnt = 0;
     public static event System.Action TimeUp;
@@ -112,6 +113,11 @@ public class StageManager : MonoBehaviour
     private float TIME_SEC;
 
     [SerializeField]
+    [Range(0.1f, 99.0f)]
+    [Tooltip("ìGí«â¡éûä‘é¸ä˙")]
+    private float ADD_TARGET_CYCLE_SEC;
+
+    [SerializeField]
     [Tooltip("èIóπÉâÉxÉã")]
     private GameObject FINISH_LABEL;
 
@@ -140,6 +146,7 @@ public class StageManager : MonoBehaviour
         SetEventAction();
         PlayBGM(BGM_CLIP, BGM_VOLUME);
         left_time_sec = TIME_SEC;
+        next_target_add_sec = TIME_SEC - ADD_TARGET_CYCLE_SEC;
     }
 
     private void Update()
@@ -147,6 +154,11 @@ public class StageManager : MonoBehaviour
         if (!is_game_end)
         {
             left_time_sec -= Time.deltaTime;
+            if(left_time_sec <= next_target_add_sec)
+            {
+                SpawnTarget();
+                next_target_add_sec -= ADD_TARGET_CYCLE_SEC;
+            }
             if (left_time_sec <= 0.0f)
             {
                 left_time_sec = 0.0f;
@@ -268,13 +280,8 @@ public class StageManager : MonoBehaviour
         PlaySE(BEAT_SE,dead_position,BEAT_SOUND_VOLUME,true);
         FlashDeadLight(dead_position);
         SpawnTarget();
-        if (beat_cnt % 10 == 0)
-        {
-            SpawnTarget();
-        }
         return;
     }
-
 
     void FlashDeadLight(Vector3 dead_position)
     {
