@@ -66,16 +66,15 @@ public class AttackBall : AttackObject
 
     protected override void OnCollisionEnter(Collision collision_object)
     {
-        int TARGET_LAYER = LayerMask.NameToLayer("Target");
-        int[] COLLISION_LAYERS = {
-            LayerMask.NameToLayer("Field"),
-            LayerMask.NameToLayer("Target"),
-            LayerMask.NameToLayer("Player")
-        };
-        if(COLLISION_LAYERS.Contains(collision_object.gameObject.layer)){
+        int[] NOT_DESTROY_LAYERS = {
+            LayerMask.NameToLayer("Wall")
+            };
+        if (!NOT_DESTROY_LAYERS.Contains(collision_object.gameObject.layer))
+        {
+            int TARGET_LAYER = LayerMask.NameToLayer("Target");
             if(collision_object.gameObject.layer != TARGET_LAYER)
             {
-                base.BreakField();
+                base.BreakField(this.transform.position);
             }
             Destroy(this.gameObject);
         }

@@ -20,6 +20,7 @@ public class AttackObject : MonoBehaviour
     protected virtual void Start()
     {
         SetEventAction();
+        Debug.Log(this.transform.position);
     }
 
     protected void SetEventAction()
@@ -50,7 +51,7 @@ public class AttackObject : MonoBehaviour
         {
             return;
         }
-        if(this.transform.position.y <= -10){
+        if(this.transform.position.y <= -10.0f){
             Destroy(this.gameObject);
         }
         object_lifetime_sec -= Time.deltaTime;
@@ -58,17 +59,18 @@ public class AttackObject : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        Debug.Log(this.transform.position);
     }
 
     protected virtual void OnCollisionEnter(Collision collision_object)
     {
-        BreakField();
+        BreakField(this.transform.position);
         Destroy(this.gameObject);
+        return;
     }
 
-    protected void BreakField()
+    protected void BreakField(Vector3 break_position)
     {
-        Vector3 collision_position = this.transform.position;
-        BreakEvent.Invoke(collision_position, BREAK_RADIUS);
+        BreakEvent.Invoke(break_position, BREAK_RADIUS);
     }
 }
