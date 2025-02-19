@@ -12,6 +12,7 @@ TagManager:
   - CameraSensitivitySlider
   - SettingUIs
   - SliderLabel
+  - ManualUI
   layers:
   - Default
   - TransparentFX

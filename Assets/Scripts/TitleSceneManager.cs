@@ -22,7 +22,8 @@ public class TitleSceneManager : MonoBehaviour
     void Start()
     {
         GetGameObjects();
-        DisplaySettingWindow(false);
+        DisplayWindow("SettingUIs", false);
+        DisplayWindow("ManualUI", false);
         WriteScrollberValues();
     }
 
@@ -36,7 +37,7 @@ public class TitleSceneManager : MonoBehaviour
 
     void WriteSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
     {
-        float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, 1.0f) * 100.0f);
+        float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, 100.0f));
         value = read_value;
         slider.value = read_value;
         label.text = $"{read_value}%";
@@ -78,7 +79,8 @@ public class TitleSceneManager : MonoBehaviour
     {
         value = slider.value;
         label.text = $"{value}%";
-        PlayerPrefs.SetFloat(parameter, value/100.0f);
+        PlayerPrefs.SetFloat(parameter, value);
+        //PlayerPrefs.SetFloat(parameter, value / 100.0f);
         return;
     }
 
@@ -90,29 +92,36 @@ public class TitleSceneManager : MonoBehaviour
 
     public void LaunchSetting()
     {
-        DisplaySettingWindow(true);
+        DisplayWindow("SettingUIs", true);
         return;
     }
 
-    public void QuitSetting()
+    public void ExitSetting()
     {
-        DisplaySettingWindow(false);
+        DisplayWindow("SettingUIs", false);
         return;
     }
 
-    void DisplaySettingWindow(bool is_visible)
+    public void LaunchManual()
     {
-        GameObject.FindGameObjectWithTag("SettingUIs").GetComponent<Canvas>().enabled = is_visible;
+        DisplayWindow("ManualUI", true);
+        return;
+    }
+    public void ExitManual()
+    {
+        DisplayWindow("ManualUI", false);
+        return;
+    }
+
+    void DisplayWindow(String tag, bool is_visible)
+    {
+        GameObject.FindGameObjectWithTag(tag).GetComponent<Canvas>().enabled = is_visible;
         return;
     }
 
     public void QuitGame()
     {
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #else
         Application.Quit();
-        #endif
         return;
     }
 }

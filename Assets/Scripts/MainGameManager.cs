@@ -106,6 +106,15 @@ public class StageManager : MonoBehaviour
     [Tooltip("敵撃破時の音のベースボリューム")]
     private float BEAT_SOUND_VOLUME;
 
+    [SerializeField]
+    [Tooltip("敵追加時の音")]
+    private AudioClip ADD_SPAWN_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("敵追加時の音のベースボリューム")]
+    private float ADD_SPAWN_BASE_VOLUME;
+
     [Header("UI情報")]
     [SerializeField]
     [Tooltip("撃破数テキスト")]
@@ -210,15 +219,16 @@ public class StageManager : MonoBehaviour
         else if (is_game_started && !is_game_finished)
         {
             left_time_sec -= Time.deltaTime;
-            if(left_time_sec <= next_target_add_sec)
-            {
-                SpawnTarget();
-                next_target_add_sec -= ADD_TARGET_CYCLE_SEC;
-            }
+            
             if (left_time_sec <= 0.0f)
             {
                 left_time_sec = 0.0f;
                 TimeUpGame();
+            }else if(left_time_sec <= next_target_add_sec)
+            {
+                PlaySE(ADD_SPAWN_SE, Vector3.zero, ADD_SPAWN_BASE_VOLUME, false);
+                SpawnTarget();
+                next_target_add_sec -= ADD_TARGET_CYCLE_SEC;
             }
             TIMER_TEXT.text = $"{Mathf.Ceil(left_time_sec):00}";
         }

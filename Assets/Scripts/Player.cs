@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     private Vector3 knockback_velocity = Vector3.zero;
     private bool is_game_started = false;
     private bool is_game_finished = false;
-    private float camera_slow_rate = 0.0f;
     public static event System.Action GameOver;
 
     [Header("攻撃情報")]
@@ -45,7 +44,7 @@ public class Player : MonoBehaviour
     [Header("気絶情報")]
     [SerializeField]
     [Range(0.0f, 1.0f)]
-    [Tooltip("気絶時のカメラ感度低下度")]
+    [Tooltip("気絶時のカメラ感度")]
     private float FAINTING_CAMERA_SLOW_RATE = 0.1f;
 
     [SerializeField]
@@ -193,12 +192,20 @@ public class Player : MonoBehaviour
         Vector2 mouse_input = new Vector2(
             Input.GetAxisRaw("Mouse X"),
             Input.GetAxisRaw("Mouse Y")
-        ) * CAMERA_SENSITIVITY * (1.0f - camera_slow_rate) * PlayerPrefs.GetFloat("CameraSensitivity");
-        this.transform.rotation = Quaternion.Euler(
-            this.transform.rotation.eulerAngles.x,
-            this.transform.rotation.eulerAngles.y + mouse_input.x,
-            this.transform.rotation.eulerAngles.z
-            );
+        );
+        if (is_knockbacking)
+        {
+            mouse_input *= FAINTING_CAMERA_SLOW_RATE;
+        }
+        else
+        {
+            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity") * 0.1f;
+        }
+            this.transform.rotation = Quaternion.Euler(
+                this.transform.rotation.eulerAngles.x,
+                this.transform.rotation.eulerAngles.y + mouse_input.x,
+                this.transform.rotation.eulerAngles.z
+                );
         camera_transform.rotation = Quaternion.Euler(
             camera_transform.rotation.eulerAngles.x - mouse_input.y,
             camera_transform.rotation.eulerAngles.y,
@@ -279,7 +286,6 @@ public class Player : MonoBehaviour
 
     void KnockBack(Vector3 hit_direction)
     {
-        camera_slow_rate = FAINTING_CAMERA_SLOW_RATE;
         player_light.color = FAINTING_LIGHT_COLOR;
         is_knockbacking = true;
         float FORCE_POWER = 5.0f;
@@ -302,7 +308,6 @@ public class Player : MonoBehaviour
         is_knockbacking = false;
         player_light.color = new Color(1, 1, 1);
         camera_transform.localPosition = Vector3.zero;
-        camera_slow_rate = 0.0f;
         Invoke(nameof(FinishInvincible), INVINCIBLE_SEC);
         return;
     }
