@@ -72,12 +72,11 @@ public class Target : MonoBehaviour
     [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
-        SetEventAction();
+        ConnectEventAction(true);
         cnt_shot_cycle = CalcShotCycle();
     }
 
@@ -86,10 +85,27 @@ public class Target : MonoBehaviour
         return SHOT_CYCLE_SEC * (1.0f + Random.Range(0.0f, SHOT_CYCLE_RANDOM_RATE));
     }
 
-    void SetEventAction()
+    void ConnectEventAction(bool connect_event)
     {
-        StageManager.TimeUp += SetActiveFalse;
-        Player.GameOver += SetActiveFalse;
+        if (connect_event)
+        {
+            StageManager.TimeUp += SetActiveFalse;
+            StageManager.LeaveScene += PrepareLeaveScene;
+            Player.GameOver += SetActiveFalse;
+        }
+        else
+        {
+            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.LeaveScene -= PrepareLeaveScene;
+            Player.GameOver -= SetActiveFalse;
+        }
+        return;
+    }
+
+    void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
     }
 
     void SetActiveFalse()
@@ -97,7 +113,6 @@ public class Target : MonoBehaviour
         is_active = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (is_active)
@@ -158,6 +173,7 @@ public class Target : MonoBehaviour
         PlaySE(SHOT_SE, SHOT_VOLUME);
         return;
     }
+
     void PlaySE(AudioClip se_clip, float base_volume)
     {
         AudioSource se_source = this.AddComponent<AudioSource>();

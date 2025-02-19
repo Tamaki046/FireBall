@@ -19,14 +19,28 @@ public class AttackObject : MonoBehaviour
 
     protected virtual void Start()
     {
-        SetEventAction();
-        Debug.Log(this.transform.position);
+        ConnectEventAction(true);
     }
 
-    protected void SetEventAction()
+    protected void ConnectEventAction(bool connect_event)
     {
-        StageManager.TimeUp += SetActiveFalse;
-        Player.GameOver += SetActiveFalse;
+        if (connect_event)
+        {
+            StageManager.TimeUp += SetActiveFalse;
+            StageManager.LeaveScene += PrepareLeaveScene;
+            Player.GameOver += SetActiveFalse;
+        }
+        else
+        {
+            StageManager.TimeUp -= SetActiveFalse;
+            Player.GameOver -= SetActiveFalse;
+        }
+    }
+
+    void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
     }
 
     void SetActiveFalse()
@@ -38,7 +52,7 @@ public class AttackObject : MonoBehaviour
             attack_rigidbody.linearVelocity = Vector3.zero;
             attack_rigidbody.isKinematic = true;
         }
-        catch (MissingReferenceException e)
+        catch (MissingReferenceException)
         {
             return;
         }
@@ -59,12 +73,14 @@ public class AttackObject : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        Debug.Log(this.transform.position);
     }
 
     protected virtual void OnCollisionEnter(Collision collision_object)
     {
-        BreakField(this.transform.position);
+        if (is_active)
+        {
+            BreakField(this.transform.position);
+        }
         Destroy(this.gameObject);
         return;
     }

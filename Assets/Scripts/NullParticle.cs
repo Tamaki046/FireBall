@@ -19,13 +19,31 @@ public class Null_Particle : MonoBehaviour
     {
         float lifetime_sec = Random.Range(LIFETIME_SEC_MIN, LIFETIME_SEC_MAX);
         Invoke(nameof(ClearParticle), lifetime_sec);
-        SetEventAction();
+        ConnectEventAction(true);
     }
-    void SetEventAction()
+    void ConnectEventAction(bool connect_event)
     {
-        StageManager.TimeUp += SetActiveFalse;
-        Player.GameOver += SetActiveFalse;
+        if (connect_event)
+        {
+            StageManager.TimeUp += SetActiveFalse;
+            StageManager.LeaveScene += PrepareLeaveScene;
+            Player.GameOver += SetActiveFalse;
+        }
+        else
+        {
+            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.LeaveScene -= PrepareLeaveScene;
+            Player.GameOver -= SetActiveFalse;
+        }
+        return;
     }
+
+    void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
+    }
+
     void SetActiveFalse()
     {
         try
@@ -35,7 +53,7 @@ public class Null_Particle : MonoBehaviour
             attack_rigidbody.linearVelocity = Vector3.zero;
             attack_rigidbody.isKinematic = true;
         }
-        catch (MissingReferenceException e)
+        catch (MissingReferenceException)
         {
             return;
         }

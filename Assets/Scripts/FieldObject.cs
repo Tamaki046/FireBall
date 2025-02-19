@@ -18,25 +18,43 @@ public class FieldObject : MonoBehaviour
 
     private bool is_staying_player = false;
     private bool is_active = true;
-    private bool is_timeup = false;
+    private bool is_game_finished = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SetEventAction();
+        ConnectEventAction(true);
         object_collider = GetComponent<BoxCollider>();
         object_renderer = GetComponent<MeshRenderer>();
     }
 
-    void SetEventAction()
+    void ConnectEventAction(bool connect_event)
     {
-        AttackObject.BreakEvent += BreakTile;
-        StageManager.TimeUp += SetActiveFalse;
-        Player.GameOver += SetActiveFalse;
+        if (connect_event)
+        {
+            AttackObject.BreakEvent += BreakTile;
+            StageManager.TimeUp += SetActiveFalse;
+            StageManager.LeaveScene += PrepareLeaveScene;
+            Player.GameOver += SetActiveFalse;
+        }
+        else
+        {
+            AttackObject.BreakEvent -= BreakTile;
+            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.LeaveScene -= PrepareLeaveScene;
+            Player.GameOver -= SetActiveFalse;
+        }
+        return;
     }
+
+    void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
+    }
+
     void SetActiveFalse()
     {
-        is_timeup = true;
+        is_game_finished = true;
         return;
     }
 
@@ -58,7 +76,7 @@ public class FieldObject : MonoBehaviour
     {
         SetFieldActive(false);
         yield return new WaitForSeconds(REPAIR_SEC + distance_from_outside * DISTANCE_TIME_RATE);
-        SetFieldActive(!is_timeup);
+        SetFieldActive(!is_game_finished);
     }
 
     void SetFieldActive(bool is_active)
@@ -80,13 +98,6 @@ public class FieldObject : MonoBehaviour
             is_staying_player = true;
         }
     }
-    void Update()
-    {
-        if (is_active && !object_renderer.enabled)
-        {
-            SetFieldActive(true);
-        }
-    }
 
     private void OnTriggerExit(Collider collider_object)
     {
@@ -96,5 +107,14 @@ public class FieldObject : MonoBehaviour
             is_staying_player = false;
         }
     }
+    void Update()
+    {
+        if (is_active && !object_renderer.enabled)
+        {
+            SetFieldActive(true);
+        }
+    }
+
+    
 
 }
