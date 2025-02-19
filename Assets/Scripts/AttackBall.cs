@@ -34,6 +34,27 @@ public class AttackBall : AttackObject
                                     Random.Range(-1.0f, 1.0f),
                                     Random.Range(-1.0f, 1.0f)
                                     ).normalized * MAX_ROTATION_SPEED;
+        //PlaySE()
+        return;
+    }
+
+    void PlaySE(AudioClip se_clip, Vector3 se_position, float se_volume, bool is_3d)
+    {
+        GameObject audio_object = new GameObject("TempAudioSource");
+        audio_object.transform.position = se_position;
+
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = se_clip;
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        float blend_3d = 0.0f;
+        if (is_3d)
+        {
+            blend_3d = 1.0f;
+        }
+        audio_source.spatialBlend = blend_3d;
+        audio_source.Play();
+
+        Destroy(audio_object, se_clip.length);
         return;
     }
 
