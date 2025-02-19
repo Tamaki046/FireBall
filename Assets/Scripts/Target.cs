@@ -1,11 +1,9 @@
 using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.PlayerLoop;
 public class Target : MonoBehaviour
 {
-
     private bool isDead = false;
     private GameObject PLAYER_GAMEOBJECT;
     private float cnt_shot_cycle = 0.0f;
@@ -59,7 +57,7 @@ public class Target : MonoBehaviour
 
     [Header("死亡時情報")]
     [SerializeField]
-    [Tooltip("死亡時に生成するオブジェクト")]
+    [Tooltip("死亡時に生成する破壊オブジェクト")]
     private GameObject DEAD_OBJECT_PREFAB;
 
     [SerializeField]
@@ -71,6 +69,10 @@ public class Target : MonoBehaviour
     [Range(0.1f, 10.0f)]
     [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
+
+    [SerializeField]
+    [Tooltip("死亡時に放出するパーティクルプレハブ")]
+    private GameObject DEAD_PARTICLE;
 
     void Start()
     {
@@ -218,6 +220,7 @@ public class Target : MonoBehaviour
             Vector3 emit_velocity = direction * DEAD_OBJECT_EMIT_SPEED;
             deadobject_rigidbody.linearVelocity = emit_velocity;
         }
+        Instantiate(DEAD_PARTICLE, dead_position, Quaternion.identity);
         return;
     }
 }
