@@ -1,19 +1,27 @@
 using System;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class StageManager : MonoBehaviour
 {
+    private float start_countdown_sec = 3.0f;
     private float left_time_sec = 0.0f;
     private float next_target_add_sec = 0.0f;
-    private bool is_game_end = false;
+    private bool is_game_started = false;
+    private bool is_game_finished = false;
     private int beat_cnt = 0;
+    private GameObject FINISH_UI;
+    public static event System.Action GameStart;
     public static event System.Action TimeUp;
+    public static event System.Action LeaveScene;
 
     [Header("フィールド情報")]
     [SerializeField]
@@ -118,10 +126,6 @@ public class StageManager : MonoBehaviour
     private float ADD_TARGET_CYCLE_SEC;
 
     [SerializeField]
-    [Tooltip("終了ラベル")]
-    private GameObject FINISH_LABEL;
-
-    [SerializeField]
     [Tooltip("BGM")]
     private AudioClip BGM_CLIP;
 
@@ -141,17 +145,69 @@ public class StageManager : MonoBehaviour
 
     void Start()
     {
+        SetStartUI(true);
+        SetFinishUIsEnable(false);
         SetFieldTiles();
-        SpawnTarget();
-        SetEventAction();
+        ConnectEventAction(true);
         PlayBGM(BGM_CLIP, BGM_VOLUME);
         left_time_sec = TIME_SEC;
         next_target_add_sec = TIME_SEC - ADD_TARGET_CYCLE_SEC;
     }
 
-    private void Update()
+    void SetStartUI(bool is_visible)
     {
-        if (!is_game_end)
+        GameObject start_ui = GameObject.FindGameObjectWithTag("StartUI");
+        start_ui.GetComponent<Canvas>().enabled = is_visible;
+        UpdateCountdownStartTimer(Mathf.Ceil(start_countdown_sec));
+        return;
+    }
+
+    void UpdateCountdownStartTimer(float print_sec)
+    {
+        if(print_sec <= 0.0f)
+        {
+            SetStartUI(false);
+        }
+        else
+        {
+            GameObject start_countdown = GameObject.FindGameObjectWithTag("StartCountdown");
+            start_countdown.GetComponent<TextMeshProUGUI>().text = String.Format("{0:0}", Mathf.Ceil(print_sec));
+        }
+            
+        return;
+    }
+
+    void StartGame()
+    {
+        SpawnTarget();
+        is_game_started = true;
+        GameStart.Invoke();
+        return;
+    }
+
+    void SetFinishUIsEnable(bool is_visible)
+    {
+        GameObject finish_uis = GameObject.FindGameObjectWithTag("FinishUIs");
+        finish_uis.GetComponent<Canvas>().enabled = is_visible;
+        return;
+    }
+
+    void Update()
+    {
+        if (!is_game_started)
+        {
+            float next_sec = start_countdown_sec - Time.deltaTime;
+            if (Mathf.Ceil(start_countdown_sec) != Mathf.Ceil(next_sec))
+            {
+                UpdateCountdownStartTimer(Mathf.Ceil(next_sec));
+            }
+            start_countdown_sec = next_sec;
+            if(start_countdown_sec <= 0.0f)
+            {
+                StartGame();
+            }
+        }
+        else if (is_game_started && !is_game_finished)
         {
             left_time_sec -= Time.deltaTime;
             if(left_time_sec <= next_target_add_sec)
@@ -220,11 +276,20 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void SetEventAction()
+    void ConnectEventAction(bool connect_event)
     {
-        AttackObject.BreakEvent += GenerateBreakEffect;
-        Target.DeadEvent += DeadTarget;
-        Player.GameOver += FinishGame;
+        if (connect_event)
+        {
+            AttackObject.BreakEvent += GenerateBreakEffect;
+            Target.DeadEvent += DeadTarget;
+            Player.GameOver += FinishGame;
+        }
+        else
+        {
+            AttackObject.BreakEvent -= GenerateBreakEffect;
+            Target.DeadEvent -= DeadTarget;
+            Player.GameOver -= FinishGame;
+        }
         return;
     }
 
@@ -295,8 +360,8 @@ public class StageManager : MonoBehaviour
     void FinishGame()
     {
         PlaySE(FINISH_SE, Vector3.zero, FINISH_SE_VOLUME, false);
-        is_game_end = true;
-        FINISH_LABEL.SetActive(true);
+        is_game_finished = true;
+        SetFinishUIsEnable(true);
         return;
     }
 
@@ -304,6 +369,27 @@ public class StageManager : MonoBehaviour
     {
         TimeUp.Invoke();
         FinishGame();
+        return;
+    }
+
+    void RestartGame()
+    {
+        PrepareLeaveScene();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        return;
+    }
+
+    void PrepareLeaveScene()
+    {
+        LeaveScene.Invoke();
+        ConnectEventAction(false);
+        return;
+    }
+
+    void BackToTitle()
+    {
+        PrepareLeaveScene();
+        SceneManager.LoadScene("TitleScene");
         return;
     }
 }

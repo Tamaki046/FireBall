@@ -13,7 +13,8 @@ public class Player : MonoBehaviour
     private bool is_knockbacking = false;
     private bool is_hittable = true;
     private Vector3 knockback_velocity = Vector3.zero;
-    private bool is_active = true;
+    private bool is_game_started = false;
+    private bool is_game_finished = false;
     private float camera_slow_rate = 0.0f;
     public static event System.Action GameOver;
 
@@ -98,17 +99,42 @@ public class Player : MonoBehaviour
         character_controller = this.GetComponent<CharacterController>();
         camera_transform = this.transform.Find("Main Camera").transform;
         player_light = this.transform.Find("Point Light").GetComponent<Light>();
-        SetEventAction();
+        this.gameObject.transform.position = new Vector3(0.0f, 2.0f, 0.0f);
+        ConnectEventAction(true);
     }
 
-    void SetEventAction()
+    void ConnectEventAction(bool connect_event)
     {
-        StageManager.TimeUp += SetActiveFalse;
+        if (connect_event)
+        {
+            StageManager.GameStart += StartGame;
+            StageManager.TimeUp += SetActiveFalse;
+            StageManager.LeaveScene += PrepareLeaveScene;
+        }
+        else
+        {
+            StageManager.GameStart -= StartGame;
+            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.LeaveScene -= PrepareLeaveScene;
+        }
+        return;
+    }
+
+    void StartGame()
+    {
+        is_game_started = true;
+        return;
+    }
+
+    void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
     }
 
     void SetActiveFalse()
     {
-        is_active = false; 
+        is_game_finished = true; 
         player_rigidbody.linearVelocity = Vector3.zero;
         player_rigidbody.isKinematic = true;
         return;
@@ -116,8 +142,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!is_active)
+        if (is_game_finished)
         {
+            return;
+        }
+        else if (!is_game_started)
+        {
+            MoveOnlyGravity();
             return;
         }
         MoveCamera();
@@ -181,6 +212,17 @@ public class Player : MonoBehaviour
         Vector3 right_left_input = this.transform.right * Input.GetAxis("Horizontal");
         Vector3 velocity = (front_back_input + right_left_input).normalized * MOVE_SPEED;
         if(!character_controller.isGrounded){
+            velocity.y += Physics.gravity.y;
+        }
+        character_controller.Move(velocity * Time.deltaTime);
+        return;
+    }
+
+    void MoveOnlyGravity()
+    {
+        Vector3 velocity = Vector3.zero;
+        if (!character_controller.isGrounded)
+        {
             velocity.y += Physics.gravity.y;
         }
         character_controller.Move(velocity * Time.deltaTime);
