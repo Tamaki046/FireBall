@@ -171,7 +171,7 @@ public class StageManager : MonoBehaviour
         else
         {
             GameObject start_countdown = GameObject.FindGameObjectWithTag("StartCountdown");
-            start_countdown.GetComponent<TextMeshProUGUI>().text = String.Format("{0:0}", Mathf.Ceil(print_sec));
+            start_countdown.GetComponent<TextMeshProUGUI>().text = $"{Mathf.Ceil(print_sec):0}";
         }
             
         return;
@@ -220,7 +220,7 @@ public class StageManager : MonoBehaviour
                 left_time_sec = 0.0f;
                 TimeUpGame();
             }
-            TIMER_TEXT.text = String.Format("{0:00}", Mathf.Ceil(left_time_sec));
+            TIMER_TEXT.text = $"{Mathf.Ceil(left_time_sec):00}";
         }
     }
 
@@ -259,7 +259,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = bgm_clip;
-        audio_source.volume = bgm_volume;
+        audio_source.volume = bgm_volume * PlayerPrefs.GetFloat("BGMVolume");
         audio_source.loop = true;
         audio_source.Play();
         return;
@@ -295,7 +295,7 @@ public class StageManager : MonoBehaviour
 
     void GenerateBreakEffect(Vector3 break_position, float break_radius)
     {
-        PlaySE(BREAK_SE,break_position, break_radius*BREAK_BASE_VOLUME,true);
+        PlaySE(BREAK_SE,break_position, break_radius* BREAK_BASE_VOLUME, true);
         GenerateBreakParticle(break_position, break_radius);
         return;
     }
@@ -307,7 +307,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = se_clip;
-        audio_source.volume = se_volume;
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
         float blend_3d = 0.0f;
         if (is_3d)
         {

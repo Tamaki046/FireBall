@@ -193,7 +193,7 @@ public class Player : MonoBehaviour
         Vector2 mouse_input = new Vector2(
             Input.GetAxisRaw("Mouse X"),
             Input.GetAxisRaw("Mouse Y")
-        ) * CAMERA_SENSITIVITY * (1.0f - camera_slow_rate);
+        ) * CAMERA_SENSITIVITY * (1.0f - camera_slow_rate) * PlayerPrefs.GetFloat("CameraSensitivity");
         this.transform.rotation = Quaternion.Euler(
             this.transform.rotation.eulerAngles.x,
             this.transform.rotation.eulerAngles.y + mouse_input.x,
@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
     {
         AudioSource se_source = this.AddComponent<AudioSource>();
         se_source.clip = se_clip;
-        se_source.volume = base_volume;
+        se_source.volume = base_volume * PlayerPrefs.GetFloat("SEVolume");
         se_source.Play();
         Destroy(se_source, se_clip.length);
         return;

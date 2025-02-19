@@ -178,7 +178,7 @@ public class Target : MonoBehaviour
     {
         AudioSource se_source = this.AddComponent<AudioSource>();
         se_source.clip = se_clip;
-        se_source.volume = base_volume;
+        se_source.volume = base_volume * PlayerPrefs.GetFloat("SEVolume");
         const float BLEND_3D = 1.0f;
         se_source.spatialBlend = BLEND_3D;
         se_source.Play();
