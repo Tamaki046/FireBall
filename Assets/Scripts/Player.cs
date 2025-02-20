@@ -199,7 +199,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity") * 0.1f;
+            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity", 100.0f) * 0.03f;
         }
             this.transform.rotation = Quaternion.Euler(
                 this.transform.rotation.eulerAngles.x,

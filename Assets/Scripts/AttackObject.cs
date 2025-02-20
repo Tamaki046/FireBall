@@ -33,6 +33,7 @@ public class AttackObject : MonoBehaviour
         else
         {
             StageManager.TimeUp -= SetActiveFalse;
+            StageManager.LeaveScene -= PrepareLeaveScene;
             Player.GameOver -= SetActiveFalse;
         }
     }
@@ -66,13 +67,20 @@ public class AttackObject : MonoBehaviour
             return;
         }
         if(this.transform.position.y <= -10.0f){
-            Destroy(this.gameObject);
+            DestroyThisGameObject();
         }
         object_lifetime_sec -= Time.deltaTime;
         if (object_lifetime_sec <= 0.0f)
         {
-            Destroy(this.gameObject);
+            DestroyThisGameObject();
         }
+    }
+
+    protected virtual void DestroyThisGameObject()
+    {
+        PrepareLeaveScene();
+        Destroy(this.gameObject);
+        return;
     }
 
     protected virtual void OnCollisionEnter(Collision collision_object)
@@ -81,7 +89,7 @@ public class AttackObject : MonoBehaviour
         {
             BreakField(this.transform.position);
         }
-        Destroy(this.gameObject);
+        DestroyThisGameObject();
         return;
     }
 

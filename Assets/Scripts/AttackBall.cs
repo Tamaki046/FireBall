@@ -79,7 +79,7 @@ public class AttackBall : AttackObject
                 cnt_flare_spark_cycle = 0.0f;
             }
             if(this.transform.position.y <= -10){
-                Destroy(this.gameObject);
+                base.DestroyThisGameObject();
             }
         }
         return;
@@ -97,7 +97,7 @@ public class AttackBall : AttackObject
             {
                 base.BreakField(this.transform.position);
             }
-            Destroy(this.gameObject);
+            base.DestroyThisGameObject();
         }
         return;
     }
