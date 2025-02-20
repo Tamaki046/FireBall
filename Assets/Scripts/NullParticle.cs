@@ -64,7 +64,14 @@ public class Null_Particle : MonoBehaviour
     {
         if (is_active)
         {
-            Destroy(this.gameObject);
+            DestroyThisGameObject();
         }
+    }
+
+    void DestroyThisGameObject()
+    {
+        PrepareLeaveScene();
+        Destroy(this.gameObject);
+        return;
     }
 }
