@@ -74,7 +74,7 @@ public class Target : MonoBehaviour
     [Tooltip("死亡時に放出するパーティクルプレハブ")]
     private GameObject DEAD_PARTICLE;
 
-    void Start()
+    private void Start()
     {
         const string PLAYER_TAG = "Player";
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
@@ -82,12 +82,12 @@ public class Target : MonoBehaviour
         cnt_shot_cycle = CalcShotCycle();
     }
 
-    float CalcShotCycle()
+    private float CalcShotCycle()
     {
         return SHOT_CYCLE_SEC * (1.0f + Random.Range(0.0f, SHOT_CYCLE_RANDOM_RATE));
     }
 
-    void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool connect_event)
     {
         if (connect_event)
         {
@@ -104,18 +104,18 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    void SetActiveFalse()
+    private void SetActiveFalse()
     {
         is_active = false;
     }
 
-    void Update()
+    private void Update()
     {
         if (is_active)
         {
@@ -130,7 +130,7 @@ public class Target : MonoBehaviour
         }
     }
 
-    void LookAtPlayer()
+    private void LookAtPlayer()
     {
         Vector3 vector_to_player = PLAYER_GAMEOBJECT.transform.position - this.transform.position;
         Quaternion quaternion_to_player = Quaternion.LookRotation(vector_to_player);
@@ -138,7 +138,7 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void ChasePlayer()
+    private void ChasePlayer()
     {
         float MIN_DISTANCE = DISTANCE_FROM_PLAYER * (1.0f - DISTANCE_ALLOW_RATE);
         float MAX_DISTANCE = DISTANCE_FROM_PLAYER * (1.0f + DISTANCE_ALLOW_RATE);
@@ -164,7 +164,7 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void ShotFireBall()
+    private void ShotFireBall()
     {
         Vector3 SHOT_DIRECTION = (PLAYER_GAMEOBJECT.transform.position - this.transform.position).normalized;
         Vector3 shot_position = this.transform.position + SHOT_DIRECTION * 2.0f;
@@ -176,7 +176,7 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void PlaySE(AudioClip se_clip, float base_volume)
+    private void PlaySE(AudioClip se_clip, float base_volume)
     {
         AudioSource se_source = this.AddComponent<AudioSource>();
         se_source.clip = se_clip;
@@ -188,7 +188,7 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void OnCollisionEnter(Collision collision_object)
+    private void OnCollisionEnter(Collision collision_object)
     {
         int FIREBALL_LAYER_INT = LayerMask.NameToLayer("Attack Ball");
         if ((collision_object.gameObject.layer == FIREBALL_LAYER_INT) && (!isDead))
@@ -199,14 +199,14 @@ public class Target : MonoBehaviour
         return;
     }
 
-    void Dead()
+    private void Dead()
     {
         EmitDeadObjects(this.transform.position);
         DeadEvent.Invoke(this.transform.position);
         Destroy(this.gameObject);
     }
 
-    void EmitDeadObjects(Vector3 dead_position)
+    private void EmitDeadObjects(Vector3 dead_position)
     {
         for (int i = 0; i < DEAD_OBJECT_NUM; i++)
         {

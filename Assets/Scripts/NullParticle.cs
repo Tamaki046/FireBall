@@ -14,14 +14,14 @@ public class Null_Particle : MonoBehaviour
 
     private bool is_active = true;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         float lifetime_sec = Random.Range(LIFETIME_SEC_MIN, LIFETIME_SEC_MAX);
         Invoke(nameof(ClearParticle), lifetime_sec);
         ConnectEventAction(true);
     }
-    void ConnectEventAction(bool connect_event)
+
+    private void ConnectEventAction(bool connect_event)
     {
         if (connect_event)
         {
@@ -38,13 +38,13 @@ public class Null_Particle : MonoBehaviour
         return;
     }
 
-    void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    void SetActiveFalse()
+    private void SetActiveFalse()
     {
         try
         {
@@ -60,7 +60,7 @@ public class Null_Particle : MonoBehaviour
         return;
     }
 
-    void ClearParticle()
+    private void ClearParticle()
     {
         if (is_active)
         {
@@ -68,7 +68,7 @@ public class Null_Particle : MonoBehaviour
         }
     }
 
-    void DestroyThisGameObject()
+    private void DestroyThisGameObject()
     {
         PrepareLeaveScene();
         Destroy(this.gameObject);

@@ -16,7 +16,6 @@ public class AttackObject : MonoBehaviour
     [Tooltip("”j‰ó”¼Œa")]
     protected float BREAK_RADIUS;
 
-
     protected virtual void Start()
     {
         ConnectEventAction(true);
@@ -38,13 +37,13 @@ public class AttackObject : MonoBehaviour
         }
     }
 
-    void PrepareLeaveScene()
+    protected void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    void SetActiveFalse()
+    protected void SetActiveFalse()
     {
         try
         {

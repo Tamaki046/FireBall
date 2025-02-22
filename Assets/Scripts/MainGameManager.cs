@@ -152,7 +152,7 @@ public class StageManager : MonoBehaviour
     [Tooltip("èIóπéûå¯â âπÇÃÉ{ÉäÉÖÅ[ÉÄ")]
     private float FINISH_SE_VOLUME;
 
-    void Start()
+    private void Start()
     {
         SetStartUI(true);
         SetFinishUIsEnable(false);
@@ -163,7 +163,7 @@ public class StageManager : MonoBehaviour
         next_target_add_sec = TIME_SEC - ADD_TARGET_CYCLE_SEC;
     }
 
-    void SetStartUI(bool is_visible)
+    private void SetStartUI(bool is_visible)
     {
         GameObject start_ui = GameObject.FindGameObjectWithTag("StartUI");
         start_ui.GetComponent<Canvas>().enabled = is_visible;
@@ -171,7 +171,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void UpdateCountdownStartTimer(float print_sec)
+    private void UpdateCountdownStartTimer(float print_sec)
     {
         if(print_sec <= 0.0f)
         {
@@ -186,7 +186,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void StartGame()
+    private void StartGame()
     {
         SpawnTarget();
         is_game_started = true;
@@ -194,14 +194,14 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void SetFinishUIsEnable(bool is_visible)
+    private void SetFinishUIsEnable(bool is_visible)
     {
         GameObject finish_uis = GameObject.FindGameObjectWithTag("FinishUIs");
         finish_uis.GetComponent<Canvas>().enabled = is_visible;
         return;
     }
 
-    void Update()
+    private void Update()
     {
         if (!is_game_started)
         {
@@ -234,7 +234,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    void SetFieldTiles(){
+    private void SetFieldTiles(){
         float TILE_SIZE = fieldblock_prefab_white.transform.localScale.x;
         Vector3 tile_position;
         Transform PARENT_TRANSFORM = this.transform;
@@ -263,7 +263,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    void PlayBGM(AudioClip bgm_clip, float bgm_volume)
+    private void PlayBGM(AudioClip bgm_clip, float bgm_volume)
     {
         GameObject audio_object = new GameObject("TempAudioSource");
 
@@ -275,7 +275,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void SpawnTarget()
+    private void SpawnTarget()
     {
         Vector3 spawn_position = new Vector3(
                 Random.Range(SPAWN_RANGE_MIN.x, SPAWN_RANGE_MAX.x),
@@ -286,7 +286,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool connect_event)
     {
         if (connect_event)
         {
@@ -303,14 +303,14 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void GenerateBreakEffect(Vector3 break_position, float break_radius)
+    private void GenerateBreakEffect(Vector3 break_position, float break_radius)
     {
         PlaySE(BREAK_SE,break_position, break_radius* BREAK_BASE_VOLUME, true);
         GenerateBreakParticle(break_position, break_radius);
         return;
     }
 
-    void PlaySE(AudioClip se_clip,Vector3 se_position, float se_volume, bool is_3d)
+    private void PlaySE(AudioClip se_clip,Vector3 se_position, float se_volume, bool is_3d)
     {
         GameObject audio_object = new GameObject("TempAudioSource");
         audio_object.transform.position = se_position;
@@ -330,7 +330,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void GenerateBreakParticle(Vector3 break_position, float break_radius)
+    private void GenerateBreakParticle(Vector3 break_position, float break_radius)
     {
         int generate_num = PARTICLE_BASE_NUM * (int)Mathf.Round(break_radius);
         for(int i = 0; i < generate_num; i++)
@@ -348,7 +348,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    public void DeadTarget(Vector3 dead_position)
+    private void DeadTarget(Vector3 dead_position)
     {
         beat_cnt++;
         BEAT_TEXT.text = String.Format("{0:000}",beat_cnt);
@@ -358,7 +358,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void FlashDeadLight(Vector3 dead_position)
+    private void FlashDeadLight(Vector3 dead_position)
     {
         Vector3 flash_position = dead_position;
         GameObject dead_flash_object = Instantiate(DEAD_FLASH_PREFAB, dead_position, Quaternion.identity);
@@ -367,7 +367,7 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void FinishGame()
+    private void FinishGame()
     {
         PlaySE(FINISH_SE, Vector3.zero, FINISH_SE_VOLUME, false);
         is_game_finished = true;
@@ -382,21 +382,21 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    void RestartGame()
+    private void RestartGame()
     {
         PrepareLeaveScene();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         return;
     }
 
-    void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         LeaveScene.Invoke();
         ConnectEventAction(false);
         return;
     }
 
-    void BackToTitle()
+    private void BackToTitle()
     {
         PrepareLeaveScene();
         SceneManager.LoadScene("TitleScene");
