@@ -201,17 +201,38 @@ public class Player : MonoBehaviour
         {
             mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity", 100.0f);
         }
-            this.transform.rotation = Quaternion.Euler(
-                this.transform.rotation.eulerAngles.x,
-                this.transform.rotation.eulerAngles.y + mouse_input.x,
-                this.transform.rotation.eulerAngles.z
-                );
+        this.transform.rotation = Quaternion.Euler(
+            this.transform.rotation.eulerAngles.x,
+            this.transform.rotation.eulerAngles.y + mouse_input.x,
+            this.transform.rotation.eulerAngles.z
+            );
+        const float MAX_ANGLE = 80.0f;
         camera_transform.rotation = Quaternion.Euler(
-            camera_transform.rotation.eulerAngles.x - mouse_input.y,
+            ClampEulerAngles(camera_transform.rotation.eulerAngles.x - mouse_input.y, MAX_ANGLE, MAX_ANGLE),
             camera_transform.rotation.eulerAngles.y,
             camera_transform.rotation.eulerAngles.z
             );
         return;
+    }
+
+    private float ClampEulerAngles(float positive_angle, float up_max_angle, float down_max_angle)
+    {
+        float clamped_angles = positive_angle;
+        if(clamped_angles <= 180.0f)
+        {
+            if(clamped_angles > down_max_angle)
+            {
+                clamped_angles = down_max_angle;
+            }
+        }
+        else
+        {
+            if(clamped_angles < 360.0f - up_max_angle)
+            {
+                clamped_angles = 360.0f - up_max_angle;
+            }
+        }
+        return clamped_angles;
     }
 
     private void MoveCharacter(){

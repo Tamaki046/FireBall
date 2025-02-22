@@ -3,26 +3,19 @@ using UnityEngine;
 
 public class AttackBall : AttackObject
 {
-    private Vector3 core_rotation_velocity;
     private float cnt_flare_spark_cycle;
+    private Vector3 core_rotation_velocity;
 
-    [SerializeField]
-    [Tooltip("火の粉のプレハブ")]
+    [SerializeField, Tooltip("火の粉のプレハブ")]
     private GameObject attack_spark_prefab;
 
-    [SerializeField]
-    [Range(0.1f,1.0f)]
-    [Tooltip("火の粉最大発射間隔")]
+    [SerializeField, Tooltip("火の粉最大発射間隔"), Range(0.1f,1.0f)]
     private float MAX_FLARE_SPARK_CYCLE = 0.3f;
 
-    [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("火の粉の発射速度")]
+    [SerializeField, Tooltip("火の粉の発射速度"), Min(0.1f)]
     private float SPARK_SPEED = 3.0f;
 
-    [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("火の粉が出ない秒数")]
+    [SerializeField, Tooltip("火の粉が出ない秒数"), Min(0.1f)]
     private float no_spark_sec = 0.2f;
 
     protected override void Start()
@@ -34,27 +27,6 @@ public class AttackBall : AttackObject
                                     Random.Range(-1.0f, 1.0f),
                                     Random.Range(-1.0f, 1.0f)
                                     ).normalized * MAX_ROTATION_SPEED;
-        //PlaySE()
-        return;
-    }
-
-    private void PlaySE(AudioClip se_clip, Vector3 se_position, float se_volume, bool is_3d)
-    {
-        GameObject audio_object = new GameObject("TempAudioSource");
-        audio_object.transform.position = se_position;
-
-        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
-        audio_source.clip = se_clip;
-        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
-        float blend_3d = 0.0f;
-        if (is_3d)
-        {
-            blend_3d = 1.0f;
-        }
-        audio_source.spatialBlend = blend_3d;
-        audio_source.Play();
-
-        Destroy(audio_object, se_clip.length);
         return;
     }
 
