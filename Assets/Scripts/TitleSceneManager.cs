@@ -12,14 +12,17 @@ public class TitleSceneManager : MonoBehaviour
     private float bgm_volume = 1.0f;
     private Slider bgm_slider;
     private TextMeshProUGUI bgm_label;
+
     private float se_volume = 1.0f;
     private Slider se_slider;
     private TextMeshProUGUI se_label;
+    
     private float camera_sensitivity = 1.0f;
     private Slider camera_slider;
     private TextMeshProUGUI camera_label;
 
-    void Start()
+
+    private void Start()
     {
         GetGameObjects();
         DisplayWindow("SettingUIs", false);
@@ -27,7 +30,7 @@ public class TitleSceneManager : MonoBehaviour
         WriteScrollberValues();
     }
 
-    void WriteScrollberValues()
+    private void WriteScrollberValues()
     {
         WriteSingleScrollberValue("BGMVolume", ref bgm_volume, ref bgm_slider, ref bgm_label);
         WriteSingleScrollberValue("SEVolume", ref se_volume, ref se_slider, ref se_label);
@@ -35,7 +38,7 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    void WriteSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
+    private void WriteSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
     {
         float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, 100.0f));
         value = read_value;
@@ -44,7 +47,7 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    void GetGameObjects()
+    private void GetGameObjects()
     {
         GetSingleSliderObject("BGMSlider", ref bgm_slider, ref bgm_label);
         GetSingleSliderObject("SESlider", ref se_slider, ref se_label);
@@ -52,7 +55,7 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    void GetSingleSliderObject(String tag, ref Slider slider, ref TextMeshProUGUI label)
+    private void GetSingleSliderObject(String tag, ref Slider slider, ref TextMeshProUGUI label)
     {
         GameObject tmp_gameobject = GameObject.FindGameObjectWithTag(tag);
         slider = tmp_gameobject.GetComponent<Slider>();
@@ -66,7 +69,7 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    public void UpdateSliders()
+    private void UpdateSliders()
     {
         UpdateSingleSlider("BGMVolume", ref bgm_volume, bgm_slider, ref bgm_label);
         UpdateSingleSlider("SEVolume", ref se_volume, se_slider, ref se_label);
@@ -75,7 +78,7 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    void UpdateSingleSlider(String parameter, ref float value, Slider slider, ref TextMeshProUGUI label)
+    private void UpdateSingleSlider(String parameter, ref float value, Slider slider, ref TextMeshProUGUI label)
     {
         value = slider.value;
         label.text = $"{value}%";
@@ -84,42 +87,43 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    public void StargGame()
+    private void StargGame()
     {
         SceneManager.LoadScene("MainGameScene");
         return;
     }
 
-    public void LaunchSetting()
+    private void LaunchSetting()
     {
         DisplayWindow("SettingUIs", true);
         return;
     }
 
-    public void ExitSetting()
+    private void ExitSetting()
     {
         DisplayWindow("SettingUIs", false);
         return;
     }
 
-    public void LaunchManual()
+    private void LaunchManual()
     {
         DisplayWindow("ManualUI", true);
         return;
     }
-    public void ExitManual()
+
+    private void ExitManual()
     {
         DisplayWindow("ManualUI", false);
         return;
     }
 
-    void DisplayWindow(String tag, bool is_visible)
+    private void DisplayWindow(String tag, bool is_visible)
     {
         GameObject.FindGameObjectWithTag(tag).GetComponent<Canvas>().enabled = is_visible;
         return;
     }
 
-    public void QuitGame()
+    private void QuitGame()
     {
         Application.Quit();
         return;

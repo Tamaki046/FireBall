@@ -38,7 +38,7 @@ public class AttackBall : AttackObject
         return;
     }
 
-    void PlaySE(AudioClip se_clip, Vector3 se_position, float se_volume, bool is_3d)
+    private void PlaySE(AudioClip se_clip, Vector3 se_position, float se_volume, bool is_3d)
     {
         GameObject audio_object = new GameObject("TempAudioSource");
         audio_object.transform.position = se_position;
@@ -102,7 +102,7 @@ public class AttackBall : AttackObject
         return;
     }
 
-    void SpawnFireSpark(){
+    private void SpawnFireSpark(){
         Vector3 shot_position = this.transform.position;
         GameObject firespark = Instantiate(attack_spark_prefab, shot_position, Quaternion.identity);
         Rigidbody firespark_rigidbody = firespark.GetComponent<Rigidbody>();

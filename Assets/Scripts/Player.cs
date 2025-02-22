@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
     private float FALL_VOLUME;
 
 
-    void Start()
+    private void Start()
     {
         player_rigidbody = this.GetComponent<Rigidbody>();
         player_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
@@ -102,7 +102,7 @@ public class Player : MonoBehaviour
         ConnectEventAction(true);
     }
 
-    void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool connect_event)
     {
         if (connect_event)
         {
@@ -119,19 +119,19 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void StartGame()
+    private void StartGame()
     {
         is_game_started = true;
         return;
     }
 
-    void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    void SetActiveFalse()
+    private void SetActiveFalse()
     {
         is_game_finished = true; 
         player_rigidbody.linearVelocity = Vector3.zero;
@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void Update()
+    private void Update()
     {
         if (is_game_finished)
         {
@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void MoveCamera(){
+    private void MoveCamera(){
         Vector2 mouse_input = new Vector2(
             Input.GetAxisRaw("Mouse X"),
             Input.GetAxisRaw("Mouse Y")
@@ -214,7 +214,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void MoveCharacter(){
+    private void MoveCharacter(){
         Vector3 front_back_input = this.transform.forward * Input.GetAxis("Vertical");
         Vector3 right_left_input = this.transform.right * Input.GetAxis("Horizontal");
         Vector3 velocity = (front_back_input + right_left_input).normalized * MOVE_SPEED;
@@ -225,7 +225,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void MoveOnlyGravity()
+    private void MoveOnlyGravity()
     {
         Vector3 velocity = Vector3.zero;
         if (!character_controller.isGrounded)
@@ -236,7 +236,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void ShotFireball(){
+    private void ShotFireball(){
         Vector3 SHOT_DIRECTION = new Vector3(
             this.transform.forward.x * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad)),
             - Mathf.Sin(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad),
@@ -251,7 +251,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void PlaySE(AudioClip se_clip, float base_volume)
+    private void PlaySE(AudioClip se_clip, float base_volume)
     {
         AudioSource se_source = this.AddComponent<AudioSource>();
         se_source.clip = se_clip;
@@ -261,7 +261,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void OnCollisionEnter(Collision collision_object)
+    private void OnCollisionEnter(Collision collision_object)
     {
         int ENEMY_BALL_LAYERS = LayerMask.NameToLayer("Enemy Ball");
         if (collision_object.gameObject.layer == ENEMY_BALL_LAYERS && is_hittable)
@@ -271,7 +271,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ShakeCamera()
+    private void ShakeCamera()
     {
         float SHAKE_POWER = 0.1f;
         float shake_degree = Random.Range(0.0f,2.0f*Mathf.PI);
@@ -284,7 +284,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void KnockBack(Vector3 hit_direction)
+    private void KnockBack(Vector3 hit_direction)
     {
         player_light.color = FAINTING_LIGHT_COLOR;
         is_knockbacking = true;
@@ -303,7 +303,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void FinishKnockBack()
+    private void FinishKnockBack()
     {
         is_knockbacking = false;
         player_light.color = new Color(1, 1, 1);
@@ -312,7 +312,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void FinishInvincible()
+    private void FinishInvincible()
     {
         is_hittable = true;
         return;

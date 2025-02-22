@@ -20,14 +20,14 @@ public class FieldObject : MonoBehaviour
     private bool is_active = true;
     private bool is_game_finished = false;
 
-    void Start()
+    private void Start()
     {
         ConnectEventAction(true);
         object_collider = GetComponent<BoxCollider>();
         object_renderer = GetComponent<MeshRenderer>();
     }
 
-    void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool connect_event)
     {
         if (connect_event)
         {
@@ -46,19 +46,19 @@ public class FieldObject : MonoBehaviour
         return;
     }
 
-    void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    void SetActiveFalse()
+    private void SetActiveFalse()
     {
         is_game_finished = true;
         return;
     }
 
-    void BreakTile(Vector3 break_position, float break_radius)
+    private void BreakTile(Vector3 break_position, float break_radius)
     {
         Vector3 break_position_formed = new Vector3(
                 break_position.x,
@@ -79,7 +79,7 @@ public class FieldObject : MonoBehaviour
         SetFieldActive(!is_game_finished);
     }
 
-    void SetFieldActive(bool is_active)
+    private void SetFieldActive(bool is_active)
     {
         this.is_active = is_active;
         if (!is_staying_player)
@@ -107,14 +107,12 @@ public class FieldObject : MonoBehaviour
             is_staying_player = false;
         }
     }
-    void Update()
+
+    private void Update()
     {
         if (is_active && !object_renderer.enabled)
         {
             SetFieldActive(true);
         }
     }
-
-    
-
 }
