@@ -21,6 +21,7 @@ public class TitleSceneManager : MonoBehaviour
     private Slider camera_slider;
     private TextMeshProUGUI camera_label;
 
+    private bool is_setting = false;
 
     private void Start()
     {
@@ -39,15 +40,15 @@ public class TitleSceneManager : MonoBehaviour
 
     private void StoreScrollberValues()
     {
-        StoreSingleScrollberValue("BGMVolume", ref bgm_volume, ref bgm_slider, ref bgm_label);
-        StoreSingleScrollberValue("SEVolume", ref se_volume, ref se_slider, ref se_label);
-        StoreSingleScrollberValue("CameraSensitivity", ref camera_sensitivity, ref camera_slider, ref camera_label);
+        StoreSingleScrollberValue("BGMVolume", ref bgm_volume, ref bgm_slider, ref bgm_label, 1.0f);
+        StoreSingleScrollberValue("SEVolume", ref se_volume, ref se_slider, ref se_label, 1.0f);
+        StoreSingleScrollberValue("CameraSensitivity", ref camera_sensitivity, ref camera_slider, ref camera_label, 0.5f);
         return;
     }
 
-    private void StoreSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
+    private void StoreSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label, float default_value)
     {
-        float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, 100.0f));
+        float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, default_value)*100.0f);
         value = read_value;
         slider.value = read_value;
         label.text = $"{read_value}%";
@@ -78,10 +79,12 @@ public class TitleSceneManager : MonoBehaviour
 
     private void UpdateSliders()
     {
-        UpdateSingleSlider("BGMVolume", ref bgm_volume, bgm_slider, ref bgm_label);
-        UpdateSingleSlider("SEVolume", ref se_volume, se_slider, ref se_label);
-        UpdateSingleSlider("CameraSensitivity", ref camera_sensitivity, camera_slider, ref camera_label);
-        PlayerPrefs.Save();
+        if (is_setting)
+        {
+            UpdateSingleSlider("BGMVolume", ref bgm_volume, bgm_slider, ref bgm_label);
+            UpdateSingleSlider("SEVolume", ref se_volume, se_slider, ref se_label);
+            UpdateSingleSlider("CameraSensitivity", ref camera_sensitivity, camera_slider, ref camera_label);
+        }
         return;
     }
 
@@ -89,8 +92,8 @@ public class TitleSceneManager : MonoBehaviour
     {
         value = slider.value;
         label.text = $"{value}%";
-        PlayerPrefs.SetFloat(parameter, value);
-        //PlayerPrefs.SetFloat(parameter, value / 100.0f);
+        PlayerPrefs.SetFloat(parameter, value / 100.0f);
+        PlayerPrefs.Save();
         return;
     }
 
@@ -103,12 +106,14 @@ public class TitleSceneManager : MonoBehaviour
     private void LaunchSetting()
     {
         DisplayWindow("SettingUIs", true);
+        is_setting = true;
         return;
     }
 
     private void ExitSetting()
     {
         DisplayWindow("SettingUIs", false);
+        is_setting = false;
         return;
     }
 
