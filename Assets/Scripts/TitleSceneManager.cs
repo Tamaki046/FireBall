@@ -25,20 +25,27 @@ public class TitleSceneManager : MonoBehaviour
     private void Start()
     {
         GetGameObjects();
-        DisplayWindow("SettingUIs", false);
-        DisplayWindow("ManualUI", false);
-        WriteScrollberValues();
-    }
-
-    private void WriteScrollberValues()
-    {
-        WriteSingleScrollberValue("BGMVolume", ref bgm_volume, ref bgm_slider, ref bgm_label);
-        WriteSingleScrollberValue("SEVolume", ref se_volume, ref se_slider, ref se_label);
-        WriteSingleScrollberValue("CameraSensitivity", ref camera_sensitivity, ref camera_slider, ref camera_label);
+        StoreScrollberValues();
+        HideSettingAndManualWindows();
         return;
     }
 
-    private void WriteSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
+    private void HideSettingAndManualWindows()
+    {
+        DisplayWindow("SettingUIs", false);
+        DisplayWindow("ManualUI", false);
+        return;
+    }
+
+    private void StoreScrollberValues()
+    {
+        StoreSingleScrollberValue("BGMVolume", ref bgm_volume, ref bgm_slider, ref bgm_label);
+        StoreSingleScrollberValue("SEVolume", ref se_volume, ref se_slider, ref se_label);
+        StoreSingleScrollberValue("CameraSensitivity", ref camera_sensitivity, ref camera_slider, ref camera_label);
+        return;
+    }
+
+    private void StoreSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label)
     {
         float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, 100.0f));
         value = read_value;
