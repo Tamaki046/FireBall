@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 using Random = UnityEngine.Random;
 
 public class StageManager : MonoBehaviour
@@ -17,6 +18,7 @@ public class StageManager : MonoBehaviour
     private float next_target_add_sec = 0.0f;
     private bool is_game_started = false;
     private bool is_game_finished = false;
+    private bool is_game_leaving = false;
     private int beat_cnt = 0;
     private GameObject FINISH_UI;
     public static event System.Action GameStart;
@@ -144,6 +146,15 @@ public class StageManager : MonoBehaviour
     private float BGM_VOLUME;
 
     [SerializeField]
+    [Tooltip("ポーズSE")]
+    private AudioClip PAUSE_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("ポーズSEボリューム")]
+    private float PAUSE_VOLUME;
+
+    [SerializeField]
     [Tooltip("終了時効果音")]
     private AudioClip FINISH_SE;
 
@@ -152,11 +163,31 @@ public class StageManager : MonoBehaviour
     [Tooltip("終了時効果音のボリューム")]
     private float FINISH_SE_VOLUME;
 
+    [SerializeField]
+    [Tooltip("ゲーム開始SE")]
+    private AudioClip START_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("ゲーム開始SEボリューム")]
+    private float START_VOLUME;
+
+    [SerializeField]
+    [Tooltip("タイトル帰還SE")]
+    private AudioClip TITLE_BACK_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("タイトル帰還SEボリューム")]
+    private float TITLE_BACK_VOLUME;
+
     private void Start()
     {
         SetStartUI(true);
         SetFinishUIsEnable(false);
+        SetPauseUI(false);
         SetFieldTiles();
+        EnableCursorDisplay(false);
         ConnectEventAction(true);
         PlayBGM(BGM_CLIP, BGM_VOLUME);
         left_time_sec = TIME_SEC;
@@ -201,8 +232,26 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+    private void EnableCursorDisplay(bool is_enable)
+    {
+        if (is_enable)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        return;
+    }
+
     private void Update()
     {
+        SetPauseState();
+        if (IsPausing())
+        {
+            return;
+        }
         if (!is_game_started)
         {
             float next_sec = start_countdown_sec - Time.deltaTime;
@@ -232,6 +281,65 @@ public class StageManager : MonoBehaviour
             }
             TIMER_TEXT.text = $"{Mathf.Ceil(left_time_sec):00}";
         }
+    }
+
+    private void SetPauseState()
+    {
+        if (is_game_finished)
+        {
+            if (IsPausing())
+            {
+                Time.timeScale = 1.0f;
+                EnableCursorDisplay(true);
+                SetPauseUI(false);
+            }
+        }
+        if (is_game_started && !is_game_finished && Input.GetKeyDown(KeyCode.P))
+        {
+            PlaySE(PAUSE_SE, Vector3.zero, PAUSE_VOLUME, false);
+            if (IsPausing())
+            {
+                Time.timeScale = 1.0f;
+                EnableCursorDisplay(false);
+                SetPauseUI(false);
+            }
+            else
+            {
+                Time.timeScale = 0.0f;
+                EnableCursorDisplay(true);
+                SetPauseUI(true);
+            }
+        }
+        return;
+    }
+
+    private void SetPauseUI(bool is_visible)
+    {
+        GameObject pause_ui = GameObject.FindGameObjectWithTag("PauseUI");
+        pause_ui.GetComponent<Canvas>().enabled = is_visible;
+        return;
+    }
+
+    private bool IsPausing()
+    {
+        const float STOP_TIME_SCALE = 0.5f;
+        if (Time.timeScale < STOP_TIME_SCALE)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1.0f;
+        EnableCursorDisplay(false);
+        SetPauseUI(false);
+        PlaySE(PAUSE_SE, Vector3.zero, PAUSE_VOLUME, false);
+        return;
     }
 
     private void SetFieldTiles(){
@@ -330,6 +438,23 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+    private async ValueTask AsyncPlaySE2D(AudioClip se_clip, float se_volume)
+    {
+        GameObject audio_object = new GameObject("TempAudioSource");
+        audio_object.transform.position = Vector3.zero;
+
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = se_clip;
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        const float SOUND_2D = 0.0f;
+        audio_source.spatialBlend = SOUND_2D;
+        audio_source.Play();
+
+        Destroy(audio_object, se_clip.length);
+        await Awaitable.WaitForSecondsAsync(se_clip.length);
+        return;
+    }
+
     private void GenerateBreakParticle(Vector3 break_position, float break_radius)
     {
         int generate_num = PARTICLE_BASE_NUM * (int)Mathf.Round(break_radius);
@@ -371,6 +496,7 @@ public class StageManager : MonoBehaviour
     {
         PlaySE(FINISH_SE, Vector3.zero, FINISH_SE_VOLUME, false);
         is_game_finished = true;
+        EnableCursorDisplay(true);
         SetFinishUIsEnable(true);
         return;
     }
@@ -382,10 +508,15 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    private void RestartGame()
+    private async void RestartGame()
     {
-        PrepareLeaveScene();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (!is_game_leaving)
+        {
+            is_game_leaving = true;
+            PrepareLeaveScene();
+            await AsyncPlaySE2D(START_SE, START_VOLUME);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
         return;
     }
 
@@ -396,10 +527,17 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    private void BackToTitle()
+    public async void BackToTitle()
     {
-        PrepareLeaveScene();
-        SceneManager.LoadScene("TitleScene");
+        if (!is_game_leaving)
+        {
+            is_game_leaving = true;
+            TimeUp.Invoke();
+            PrepareLeaveScene();
+            Time.timeScale = 1.0f;
+            await AsyncPlaySE2D(TITLE_BACK_SE, TITLE_BACK_VOLUME);
+            SceneManager.LoadScene("TitleScene");
+        }
         return;
     }
 }

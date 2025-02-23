@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UIElements;
 using Slider = UnityEngine.UI.Slider;
+using Unity.VisualScripting.Antlr3.Runtime;
+using System.Threading.Tasks;
 
 public class TitleSceneManager : MonoBehaviour
 {
@@ -22,6 +24,25 @@ public class TitleSceneManager : MonoBehaviour
     private TextMeshProUGUI camera_label;
 
     private bool is_setting = false;
+    private bool is_starting = false;
+
+    [SerializeField]
+    [Tooltip("ウィンドウ表示SE")]
+    private AudioClip WINDOW_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("ウィンドウSEボリューム")]
+    private float WINDOW_VOLUME;
+
+    [SerializeField]
+    [Tooltip("ゲーム開始SE")]
+    private AudioClip START_SE;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("ゲーム開始SEボリューム")]
+    private float START_VOLUME;
 
     private void Start()
     {
@@ -48,7 +69,7 @@ public class TitleSceneManager : MonoBehaviour
 
     private void StoreSingleScrollberValue(String parameter, ref float value, ref Slider slider, ref TextMeshProUGUI label, float default_value)
     {
-        float read_value = Mathf.Round(PlayerPrefs.GetFloat(parameter, default_value)*100.0f);
+        float read_value = Math.Min(Mathf.Round(PlayerPrefs.GetFloat(parameter, default_value) * 100.0f), 100.0f);
         value = read_value;
         slider.value = read_value;
         label.text = $"{read_value}%";
@@ -97,16 +118,25 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    private void StargGame()
+    private async void StargGame()
     {
-        SceneManager.LoadScene("MainGameScene");
+        if (!is_starting)
+        {
+            is_starting = true;
+            await AsyncPlaySE(START_SE, START_VOLUME);
+            SceneManager.LoadScene("MainGameScene");
+        }
         return;
     }
 
     private void LaunchSetting()
     {
-        DisplayWindow("SettingUIs", true);
-        is_setting = true;
+        if (!is_starting)
+        {
+            DisplayWindow("SettingUIs", true);
+            is_setting = true;
+            PlaySE(WINDOW_SE, WINDOW_VOLUME);
+        }
         return;
     }
 
@@ -114,18 +144,57 @@ public class TitleSceneManager : MonoBehaviour
     {
         DisplayWindow("SettingUIs", false);
         is_setting = false;
+        PlaySE(WINDOW_SE, WINDOW_VOLUME);
         return;
     }
 
     private void LaunchManual()
     {
-        DisplayWindow("ManualUI", true);
+        if (!is_starting)
+        {
+            DisplayWindow("ManualUI", true);
+            PlaySE(WINDOW_SE, WINDOW_VOLUME);
+        }
         return;
     }
 
     private void ExitManual()
     {
         DisplayWindow("ManualUI", false);
+        PlaySE(WINDOW_SE, WINDOW_VOLUME);
+        return;
+    }
+
+    private void PlaySE(AudioClip se_clip, float se_volume)
+    {
+        GameObject audio_object = new GameObject("TempAudioSource");
+        audio_object.transform.position = Vector3.zero;
+
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = se_clip;
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        const float SOUND_2D = 0.0f;
+        audio_source.spatialBlend = SOUND_2D;
+        audio_source.Play();
+
+        Destroy(audio_object, se_clip.length);
+        return;
+    }
+
+    private async ValueTask AsyncPlaySE(AudioClip se_clip, float se_volume)
+    {
+        GameObject audio_object = new GameObject("TempAudioSource");
+        audio_object.transform.position = Vector3.zero;
+
+        AudioSource audio_source = audio_object.AddComponent<AudioSource>();
+        audio_source.clip = se_clip;
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        const float SOUND_2D = 0.0f;
+        audio_source.spatialBlend = SOUND_2D;
+        audio_source.Play();
+
+        Destroy(audio_object, se_clip.length);
+        await Awaitable.WaitForSecondsAsync(se_clip.length);
         return;
     }
 

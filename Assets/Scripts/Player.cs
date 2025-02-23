@@ -141,6 +141,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        const float STOP_TIME_SCALE = 0.5f;
+        if (Time.timeScale < STOP_TIME_SCALE)
+        {
+            return;
+        }
         if (is_game_finished)
         {
             return;
@@ -199,7 +204,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity", 100.0f);
+            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity", 1.0f);
         }
         this.transform.rotation = Quaternion.Euler(
             this.transform.rotation.eulerAngles.x,

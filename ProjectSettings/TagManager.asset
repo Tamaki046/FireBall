@@ -13,6 +13,7 @@ TagManager:
   - SettingUIs
   - SliderLabel
   - ManualUI
+  - PauseUI
   layers:
   - Default
   - TransparentFX
