@@ -110,6 +110,11 @@ public class FieldObject : MonoBehaviour
 
     private void Update()
     {
+        const float STOP_TIME_SCALE = 0.5f;
+        if (Time.timeScale < STOP_TIME_SCALE)
+        {
+            return;
+        }
         if (is_active && !object_renderer.enabled)
         {
             SetFieldActive(true);
