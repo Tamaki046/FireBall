@@ -514,7 +514,12 @@ public class StageManager : MonoBehaviour
         {
             is_game_leaving = true;
             PrepareLeaveScene();
+            if (is_game_finished)
+            {
+                UpdateRanking();
+            }
             await AsyncPlaySE2D(START_SE, START_VOLUME);
+            
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         return;
@@ -535,9 +540,37 @@ public class StageManager : MonoBehaviour
             TimeUp.Invoke();
             PrepareLeaveScene();
             Time.timeScale = 1.0f;
+            if (is_game_finished)
+            {
+                UpdateRanking();
+            }
             await AsyncPlaySE2D(TITLE_BACK_SE, TITLE_BACK_VOLUME);
+            
             SceneManager.LoadScene("TitleScene");
         }
+        return;
+    }
+
+    private void UpdateRanking()
+    {
+        int[] scores =
+        {
+            PlayerPrefs.GetInt("Score1st"),
+            PlayerPrefs.GetInt("Score2nd"),
+            PlayerPrefs.GetInt("Score3rd"),
+            PlayerPrefs.GetInt("Score4th"),
+            PlayerPrefs.GetInt("Score5th"),
+            beat_cnt
+        };
+        Array.Sort(scores);
+        Array.Reverse(scores);
+
+        PlayerPrefs.SetInt("Score1st", scores[0]);
+        PlayerPrefs.SetInt("Score2nd", scores[1]);
+        PlayerPrefs.SetInt("Score3rd", scores[2]);
+        PlayerPrefs.SetInt("Score4th", scores[3]);
+        PlayerPrefs.SetInt("Score5th", scores[4]);
+        PlayerPrefs.Save();
         return;
     }
 }

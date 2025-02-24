@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 using Slider = UnityEngine.UI.Slider;
 using Unity.VisualScripting.Antlr3.Runtime;
 using System.Threading.Tasks;
+using System.Reflection.Emit;
 
 public class TitleSceneManager : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public class TitleSceneManager : MonoBehaviour
     {
         GetGameObjects();
         StoreScrollberValues();
+        LoadRanking();
         HideSettingAndManualWindows();
         return;
     }
@@ -73,6 +75,21 @@ public class TitleSceneManager : MonoBehaviour
         value = read_value;
         slider.value = read_value;
         label.text = $"{read_value}%";
+        return;
+    }
+
+    private void LoadRanking()
+    {
+        GameObject ranking_label = GameObject.FindGameObjectWithTag("RankingText");
+        int[] score =
+        {
+            PlayerPrefs.GetInt("Score1st",10),
+            PlayerPrefs.GetInt("Score2nd",7),
+            PlayerPrefs.GetInt("Score3rd",5),
+            PlayerPrefs.GetInt("Score4th",3),
+            PlayerPrefs.GetInt("Score5th",1)
+        };
+        ranking_label.GetComponent<TextMeshProUGUI>().text = $"{score[0]:000}\n{score[1]:000}\n{score[2]:000}\n{score[3]:000}\n{score[4]:000}";
         return;
     }
 
@@ -129,38 +146,27 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
-    private void LaunchSetting()
+    public void LaunchWindow(String tag)
     {
         if (!is_starting)
         {
-            DisplayWindow("SettingUIs", true);
-            is_setting = true;
+            DisplayWindow(tag, true);
+            if (tag == "SettingUIs")
+            {
+                is_setting = true;
+            }
             PlaySE(WINDOW_SE, WINDOW_VOLUME);
         }
         return;
     }
 
-    private void ExitSetting()
+    public void ExitWindow(String tag)
     {
-        DisplayWindow("SettingUIs", false);
-        is_setting = false;
-        PlaySE(WINDOW_SE, WINDOW_VOLUME);
-        return;
-    }
-
-    private void LaunchManual()
-    {
-        if (!is_starting)
+        DisplayWindow(tag, false);
+        if (tag == "SettingUIs")
         {
-            DisplayWindow("ManualUI", true);
-            PlaySE(WINDOW_SE, WINDOW_VOLUME);
+            is_setting = false;
         }
-        return;
-    }
-
-    private void ExitManual()
-    {
-        DisplayWindow("ManualUI", false);
         PlaySE(WINDOW_SE, WINDOW_VOLUME);
         return;
     }
