@@ -83,11 +83,11 @@ public class TitleSceneManager : MonoBehaviour
         GameObject ranking_label = GameObject.FindGameObjectWithTag("RankingText");
         int[] score =
         {
-            PlayerPrefs.GetInt("Score1st",10),
-            PlayerPrefs.GetInt("Score2nd",7),
-            PlayerPrefs.GetInt("Score3rd",5),
-            PlayerPrefs.GetInt("Score4th",3),
-            PlayerPrefs.GetInt("Score5th",1)
+            PlayerPrefs.GetInt("Score1st",0),
+            PlayerPrefs.GetInt("Score2nd",0),
+            PlayerPrefs.GetInt("Score3rd",0),
+            PlayerPrefs.GetInt("Score4th",0),
+            PlayerPrefs.GetInt("Score5th",0)
         };
         ranking_label.GetComponent<TextMeshProUGUI>().text = $"{score[0]:000}\n{score[1]:000}\n{score[2]:000}\n{score[3]:000}\n{score[4]:000}";
         return;
