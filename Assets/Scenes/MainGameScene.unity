@@ -131,8 +131,8 @@ GameObject:
   - component: {fileID: 135635245}
   - component: {fileID: 135635244}
   m_Layer: 5
-  m_Name: TimeText
-  m_TagString: Untagged
+  m_Name: TimerText
+  m_TagString: TimerText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -481,7 +481,7 @@ GameObject:
   - component: {fileID: 330585547}
   m_Layer: 6
   m_Name: Main Camera
-  m_TagString: MainCamera
+  m_TagString: PlayerCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -1148,7 +1148,7 @@ GameObject:
   - component: {fileID: 622420867}
   - component: {fileID: 622420866}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: InfoCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1522,7 +1522,7 @@ GameObject:
   - component: {fileID: 784001916}
   m_Layer: 5
   m_Name: FinishUICanvas
-  m_TagString: FinishUIs
+  m_TagString: FinishUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1958,7 +1958,7 @@ MonoBehaviour:
   STAGE_COLOR_CYCLE: 5
   BREAK_PARTICLE: {fileID: 3104573739313014187, guid: 9d3f4ab8dd4be014384fe43bf70b1336, type: 3}
   PARTICLE_BASE_NUM: 3
-  BREAK_SE: {fileID: 8300000, guid: c122728b2156cc844ae9276c8719cd03, type: 3}
+  BREAK_SE_CLIP: {fileID: 8300000, guid: c122728b2156cc844ae9276c8719cd03, type: 3}
   BREAK_BASE_VOLUME: 0.1
   PARTICLE_BASE_SPEED: 1
   TARGET_PREFAB: {fileID: 4779092718859683304, guid: 58ddef8b3ffd834499b5eddafc37b723, type: 3}
@@ -1968,24 +1968,25 @@ MonoBehaviour:
   DEAD_FLASH_COLOR: {r: 1, g: 0, b: 0.9953165, a: 1}
   DEAD_FLASH_INTENSITY: 10
   DEAD_FLASH_LIFETIME_SEC: 2
-  BEAT_SE: {fileID: 8300000, guid: c8722e9e870eee84d92967df04614825, type: 3}
-  BEAT_SOUND_VOLUME: 0.2
-  ADD_SPAWN_SE: {fileID: 8300000, guid: d355459d8fae6ec49be4073d6edfd629, type: 3}
-  ADD_SPAWN_BASE_VOLUME: 0.2
-  BEAT_TEXT: {fileID: 1028133665}
-  TIMER_TEXT: {fileID: 135635244}
-  TIME_SEC: 60
-  ADD_TARGET_CYCLE_SEC: 20
+  BEAT_SE_CLIP: {fileID: 8300000, guid: c8722e9e870eee84d92967df04614825, type: 3}
+  BEAT_SE_BASE_VOLUME: 0.2
+  ADD_SPAWN_SE_CLIP: {fileID: 8300000, guid: d355459d8fae6ec49be4073d6edfd629, type: 3}
+  ADD_SPAWN_SE_BASE_VOLUME: 0.2
   BGM_CLIP: {fileID: 8300000, guid: 665b859db702da44688c987c2c2a1961, type: 3}
-  BGM_VOLUME: 0.05
-  PAUSE_SE: {fileID: 8300000, guid: 00b0961f7f5d3174ab597139126de60b, type: 3}
-  PAUSE_VOLUME: 0.3
-  FINISH_SE: {fileID: 8300000, guid: 94852f78861858248b62f80f5064e0f4, type: 3}
-  FINISH_SE_VOLUME: 0.3
-  START_SE: {fileID: 8300000, guid: 6dafe43c6a47af24a83634d10032b40c, type: 3}
-  START_VOLUME: 0.3
-  TITLE_BACK_SE: {fileID: 8300000, guid: a1b13c99f09683e49b5fbc7e1a46e374, type: 3}
-  TITLE_BACK_VOLUME: 0.3
+  BGM_BASE_VOLUME: 0.1
+  PAUSE_SE_CLIP: {fileID: 8300000, guid: 00b0961f7f5d3174ab597139126de60b, type: 3}
+  PAUSE_BASE_VOLUME: 0.2
+  FINISH_SE_CLIP: {fileID: 8300000, guid: 94852f78861858248b62f80f5064e0f4, type: 3}
+  FINISH_SE_BASE_VOLUME: 0.2
+  START_SE_CLIP: {fileID: 8300000, guid: 6dafe43c6a47af24a83634d10032b40c, type: 3}
+  START_SE_BASE_VOLUME: 0.2
+  TITLE_BACK_SE_CLIP: {fileID: 8300000, guid: a1b13c99f09683e49b5fbc7e1a46e374, type: 3}
+  TITLE_BACK_SE_BASE_VOLUME: 0.2
+  TIMELIMIT_SEC: 60
+  ADD_TARGET_CYCLE_SEC: 20
+  SPAWN_SCORE_RATE: 5
+  ENABLE_NEAR_SPAWN: 0
+  DONT_SPAWN_RADIUS: 3
 --- !u!1 &1000003795
 GameObject:
   m_ObjectHideFlags: 0
@@ -2134,8 +2135,8 @@ GameObject:
   - component: {fileID: 1028133666}
   - component: {fileID: 1028133665}
   m_Layer: 5
-  m_Name: BeatCount
-  m_TagString: Untagged
+  m_Name: BeatCountText
+  m_TagString: BeatCountText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2271,7 +2272,7 @@ GameObject:
   - component: {fileID: 1213715146}
   m_Layer: 6
   m_Name: Point Light
-  m_TagString: Untagged
+  m_TagString: PlayerLight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2601,8 +2602,8 @@ GameObject:
   - component: {fileID: 1371892923}
   - component: {fileID: 1371892922}
   m_Layer: 5
-  m_Name: CountDownText
-  m_TagString: StartCountdown
+  m_Name: StartCountDownText
+  m_TagString: StartCountdownText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3391,21 +3392,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f47bff497fa3094da02819d2b8fea19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireball_prefab: {fileID: 2798246805326216883, guid: a4a2fe5e48575fa468d8a9d91dc702ac, type: 3}
+  FIREBALL_PREFAB: {fileID: 2798246805326216883, guid: a4a2fe5e48575fa468d8a9d91dc702ac, type: 3}
   SHOT_SPEED: 50
   SHOT_CYCLE: 0.3
-  SHOT_SE: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
-  SHOT_VOLUME: 0.2
-  FAINTING_CAMERA_SLOW_RATE: 0.3
+  SHOT_SE_CLIP: {fileID: 8300000, guid: c7a5299d2dbdd9e4e8b7802df7b34824, type: 3}
+  SHOT_SE_BASE_VOLUME: 0.2
+  FAINTING_CAMERA_SLOW_SENSITIVITY: 0.1
   FAINTING_LIGHT_COLOR: {r: 0.8090267, g: 0, b: 1, a: 1}
-  HIT_SE: {fileID: 8300000, guid: 3eddceafcecb8d74eb9cc061b18bebe4, type: 3}
+  HIT_SE_CLIP: {fileID: 8300000, guid: 3eddceafcecb8d74eb9cc061b18bebe4, type: 3}
+  HIT_SE_BASE_VOLUME: 0.2
   INVINCIBLE_SEC: 1
-  HIT_VOLUME: 0.2
   MOVE_SPEED: 5
-  CAMERA_SENSITIVITY: 45
+  CAMERA_SENSITIVITY: 10
   DROP_POSITION_Y: -5
-  FALL_SE: {fileID: 8300000, guid: 2f63cfe44d06f104f9a6f641d59c0a43, type: 3}
-  FALL_VOLUME: 0.2
+  FALL_SE_CLIP: {fileID: 8300000, guid: 2f63cfe44d06f104f9a6f641d59c0a43, type: 3}
+  FALL_SE_BASE_VOLUME: 0.2
 --- !u!136 &1780676344
 CapsuleCollider:
   m_ObjectHideFlags: 0

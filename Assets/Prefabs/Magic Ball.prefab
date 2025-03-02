@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: BREAK_RADIUS
-      value: 1.5
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
       propertyPath: no_spark_sec
@@ -84,6 +84,14 @@ PrefabInstance:
       propertyPath: attack_spark_prefab
       value: 
       objectReference: {fileID: 1499896805199304275, guid: 55c84064c122a2d42bff9bbce6488ebe, type: 3}
+    - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
+      propertyPath: MAX_FLARE_SPARK_CYCLE
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495696688232759159, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

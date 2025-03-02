@@ -15,190 +15,218 @@ public class StageManager : MonoBehaviour
 {
     private float start_countdown_sec = 3.0f;
     private float left_time_sec = 0.0f;
-    private float next_target_add_sec = 0.0f;
     private bool is_game_started = false;
     private bool is_game_finished = false;
     private bool is_game_leaving = false;
     private int beat_cnt = 0;
-    private GameObject FINISH_UI;
+    private int appear_cnt = 0;
+    private int next_target_add_cnt = 0;
+    private TextMeshProUGUI beat_count_textmesh;
+    private TextMeshProUGUI timer_textmesh;
     public static event System.Action GameStart;
-    public static event System.Action TimeUp;
+    public static event System.Action GameStop;
     public static event System.Action LeaveScene;
 
+    private const string START_UI_TAG = "StartUI";
+    private const string FINISH_UI_TAG = "FinishUI";
+    private const string PAUSE_UI_TAG = "PauseUI";
+    private const string TIMER_TEXT_TAG = "TimerText";
+    private const string BEAT_COUNT_TEXT_TAG = "BeatCountText";
+    private const string START_COUNTDOWN_TAG = "StartCountdownText";
+
+    private const string BGM_PREFS_KEY = "BGMVolume";
+    private const string SE_PREFS_KEY = "SEVolume";
+
     [Header("フィールド情報")]
-    [SerializeField]
     [Tooltip("フィールドブロックのプレハブ（白）")]
+    [SerializeField]
     private GameObject fieldblock_prefab_white;
 
-    [SerializeField]
     [Tooltip("フィールドブロックのプレハブ（黒）")]
+    [SerializeField]
     private GameObject fieldblock_prefab_black;
 
+    [Tooltip("ステージの1辺のタイル数"), Range(1, 100)]
     [SerializeField]
-    [Range(1,100)]
-    [Tooltip("ステージの1辺のタイル数")]
     private int STAGE_SIZE = 10;
 
+    [Tooltip("ステージのタイル色の周期"), Range(1, 100)]
     [SerializeField]
-    [Range(1, 100)]
-    [Tooltip("ステージの色の周期")]
     private int STAGE_COLOR_CYCLE = 5;
 
+
     [Header("床破壊情報")]
-    [SerializeField]
     [Tooltip("床破壊時のパーティクルオブジェクト")]
+    [SerializeField]
     private GameObject BREAK_PARTICLE;
 
+    [Tooltip("床破壊パーティクルのベース数"), Range(1, 10)]
     [SerializeField]
-    [Range(1, 10)]
-    [Tooltip("床破壊パーティクルのベース数")]
     private int PARTICLE_BASE_NUM;
 
     [SerializeField]
     [Tooltip("床破壊時の音")]
-    private AudioClip BREAK_SE;
+    private AudioClip BREAK_SE_CLIP;
 
+    [Tooltip("床破壊効果音のベースボリューム"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("床破壊効果音のベースボリューム")]
     private float BREAK_BASE_VOLUME;
 
+    [Tooltip("床破壊パーティクルのベース速度"), Range(0.0f, 100.0f)]
     [SerializeField]
-    [Range(0.0f, 100.0f)]
-    [Tooltip("床破壊パーティクルのベース速度")]
     private float PARTICLE_BASE_SPEED;
 
+
     [Header("敵キャラクター情報")]
-    [SerializeField]
     [Tooltip("生成する敵キャラクターのプレハブ")]
+    [SerializeField]
     private GameObject TARGET_PREFAB;
 
-    [SerializeField]
     [Tooltip("敵キャラクターの生成範囲の最小値")]
+    [SerializeField]
     private Vector3 SPAWN_RANGE_MIN;
 
-    [SerializeField]
     [Tooltip("敵キャラクターの生成範囲の最大値")]
+    [SerializeField]
     private Vector3 SPAWN_RANGE_MAX;
 
+    [Tooltip("敵死亡時の光")]
     [SerializeField]
-    [Tooltip("敵死亡時の光の色")]
     private GameObject DEAD_FLASH_PREFAB;
 
-    [SerializeField]
     [Tooltip("敵死亡時の光の色")]
+    [SerializeField]
     private Color DEAD_FLASH_COLOR;
 
+    [Tooltip("敵死亡時の光の強さ"), Range(0.0f,10.0f)]
     [SerializeField]
-    [Range(0.0f,10.0f)]
-    [Tooltip("敵死亡時の光の強さ")]
     private float DEAD_FLASH_INTENSITY;
 
+    [Tooltip("敵死亡時の光の残存秒数"), Range(0.0f, 5.0f)]
     [SerializeField]
-    [Range(0.0f, 5.0f)]
-    [Tooltip("敵死亡時の光の残存秒数")]
     private float DEAD_FLASH_LIFETIME_SEC;
 
-    [SerializeField]
     [Tooltip("敵撃破時の音")]
-    private AudioClip BEAT_SE;
-
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("敵撃破時の音のベースボリューム")]
-    private float BEAT_SOUND_VOLUME;
+    private AudioClip BEAT_SE_CLIP;
 
+    [Tooltip("敵撃破時の音のベースボリューム"), Range(0.0f, 1.0f)]
     [SerializeField]
+    private float BEAT_SE_BASE_VOLUME;
+
     [Tooltip("敵追加時の音")]
-    private AudioClip ADD_SPAWN_SE;
-
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("敵追加時の音のベースボリューム")]
-    private float ADD_SPAWN_BASE_VOLUME;
+    private AudioClip ADD_SPAWN_SE_CLIP;
 
-    [Header("UI情報")]
+    [Tooltip("敵追加時の音のベースボリューム"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Tooltip("撃破数テキスト")]
-    private TextMeshProUGUI BEAT_TEXT;
+    private float ADD_SPAWN_SE_BASE_VOLUME;
 
-    [SerializeField]
-    [Tooltip("タイマーテキスト")]
-    private TextMeshProUGUI TIMER_TEXT;
 
+    [Header("BGMや効果音")]
+    [Tooltip("BGM音声ファイル")]
     [SerializeField]
-    [Range(0.1f,99.0f)]
-    [Tooltip("制限時間")]
-    private float TIME_SEC;
-
-    [SerializeField]
-    [Range(0.1f, 99.0f)]
-    [Tooltip("敵追加時間周期")]
-    private float ADD_TARGET_CYCLE_SEC;
-
-    [SerializeField]
-    [Tooltip("BGM")]
     private AudioClip BGM_CLIP;
 
+    [Tooltip("BGMベースボリューム"), Range(0.0f,1.0f)]
     [SerializeField]
-    [Range(0.0f,1.0f)]
-    [Tooltip("BGMボリューム")]
-    private float BGM_VOLUME;
+    private float BGM_BASE_VOLUME;
+
+    [Tooltip("ポーズSE音声ファイル")]
+    [SerializeField]
+    private AudioClip PAUSE_SE_CLIP;
+
+    [Tooltip("ポーズSEベースボリューム"), Range(0.0f, 1.0f)]
+    [SerializeField]
+    private float PAUSE_BASE_VOLUME;
+
+    [Tooltip("終了時効果音ファイル")]
+    [SerializeField]
+    private AudioClip FINISH_SE_CLIP;
+
+    [Tooltip("終了時効果音ベースボリューム"), Range(0.0f,1.0f)]
+    [SerializeField]
+    private float FINISH_SE_BASE_VOLUME;
 
     [SerializeField]
-    [Tooltip("ポーズSE")]
-    private AudioClip PAUSE_SE;
+    [Tooltip("ゲーム開始SEファイル")]
+    private AudioClip START_SE_CLIP;
 
+    [Tooltip("ゲーム開始SEベースボリューム"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("ポーズSEボリューム")]
-    private float PAUSE_VOLUME;
+    private float START_SE_BASE_VOLUME;
 
-    [SerializeField]
-    [Tooltip("終了時効果音")]
-    private AudioClip FINISH_SE;
-
-    [SerializeField]
-    [Range(0.0f,1.0f)]
-    [Tooltip("終了時効果音のボリューム")]
-    private float FINISH_SE_VOLUME;
-
-    [SerializeField]
-    [Tooltip("ゲーム開始SE")]
-    private AudioClip START_SE;
-
-    [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("ゲーム開始SEボリューム")]
-    private float START_VOLUME;
-
-    [SerializeField]
     [Tooltip("タイトル帰還SE")]
-    private AudioClip TITLE_BACK_SE;
-
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("タイトル帰還SEボリューム")]
-    private float TITLE_BACK_VOLUME;
+    private AudioClip TITLE_BACK_SE_CLIP;
+
+    [Tooltip("タイトル帰還SEベースボリューム"), Range(0.0f, 1.0f)]
+    [SerializeField]
+    private float TITLE_BACK_SE_BASE_VOLUME;
+
+
+    [Header("バランス調整情報")]
+    [Tooltip("制限時間"), Range(0.1f, 99.0f)]
+    [SerializeField]
+    private float TIMELIMIT_SEC;
+
+    [Tooltip("敵追加時間周期"), Range(0.1f, 99.0f)]
+    [SerializeField]
+    private float ADD_TARGET_CYCLE_SEC;
+
+    [Tooltip("敵追加スコア周期"), Range(1,10)]
+    [SerializeField]
+    private int SPAWN_SCORE_RATE;
+
+    [Tooltip("プレイヤー近辺へのリスポーンを可能にするか")]
+    [SerializeField]
+    private bool ENABLE_NEAR_SPAWN = false;
+
+    [Tooltip("プレイヤー近辺のリスポーン禁止半径"), Range(0.0f, 10.0f)]
+    [SerializeField]
+    private float DONT_SPAWN_RADIUS;
+
 
     private void Start()
     {
-        SetStartUI(true);
-        SetFinishUIsEnable(false);
-        SetPauseUI(false);
-        SetFieldTiles();
-        EnableCursorDisplay(false);
+        SetupUIs();
+        SetupFieldTiles();
+        DisplayCursor(false);
         ConnectEventAction(true);
-        PlayBGM(BGM_CLIP, BGM_VOLUME);
-        left_time_sec = TIME_SEC;
-        next_target_add_sec = TIME_SEC - ADD_TARGET_CYCLE_SEC;
+        PlayBGM(BGM_CLIP, BGM_BASE_VOLUME);
+        left_time_sec = TIMELIMIT_SEC;
+        appear_cnt = 1;
+        next_target_add_cnt = appear_cnt * SPAWN_SCORE_RATE;
     }
 
-    private void SetStartUI(bool is_visible)
+    private void SetupUIs()
     {
-        GameObject start_ui = GameObject.FindGameObjectWithTag("StartUI");
-        start_ui.GetComponent<Canvas>().enabled = is_visible;
+        GetAllTextUIs();
+        DisplayUI(START_UI_TAG, true);
         UpdateCountdownStartTimer(Mathf.Ceil(start_countdown_sec));
+        DisplayUI(FINISH_UI_TAG, false);
+        DisplayUI(PAUSE_UI_TAG, false);
+        return;
+    }
+
+    private void GetAllTextUIs()
+    {
+        GetTextUI(TIMER_TEXT_TAG, ref timer_textmesh);
+        GetTextUI(BEAT_COUNT_TEXT_TAG, ref beat_count_textmesh);
+        return;
+    }
+
+    private void GetTextUI(string tag, ref TextMeshProUGUI textmesh)
+    {
+        GameObject text_object = GameObject.FindGameObjectWithTag(tag);
+        textmesh = text_object.GetComponent<TextMeshProUGUI>();
+        return;
+    }
+
+    private void DisplayUI(string tag, bool is_visible)
+    {
+        GameObject ui_object = GameObject.FindGameObjectWithTag(tag);
+        ui_object.GetComponent<Canvas>().enabled = is_visible;
         return;
     }
 
@@ -206,33 +234,52 @@ public class StageManager : MonoBehaviour
     {
         if(print_sec <= 0.0f)
         {
-            SetStartUI(false);
+            DisplayUI(START_UI_TAG, false);
         }
         else
         {
-            GameObject start_countdown = GameObject.FindGameObjectWithTag("StartCountdown");
+            GameObject start_countdown = GameObject.FindGameObjectWithTag(START_COUNTDOWN_TAG);
             start_countdown.GetComponent<TextMeshProUGUI>().text = $"{Mathf.Ceil(print_sec):0}";
         }
-            
         return;
     }
 
-    private void StartGame()
+    private void SetupFieldTiles()
     {
-        SpawnTarget();
-        is_game_started = true;
-        GameStart.Invoke();
-        return;
+        float TILE_SIZE = fieldblock_prefab_white.transform.localScale.x;
+        Vector3 tile_position;
+        Transform PARENT_TRANSFORM = this.transform;
+        float ORIGIN_COORDINATE;
+        if (STAGE_SIZE % 2 == 0)
+        {
+            ORIGIN_COORDINATE = (STAGE_SIZE / 2) * TILE_SIZE * (-1.0f) + (TILE_SIZE / 2.0f);
+        }
+        else
+        {
+            ORIGIN_COORDINATE = (STAGE_SIZE / 2) * TILE_SIZE * (-1.0f);
+        }
+        for (int i = 0; i < STAGE_SIZE; i++)
+        {
+            for (int j = 0; j < STAGE_SIZE; j++)
+            {
+                tile_position = new Vector3(
+                    ORIGIN_COORDINATE + (float)i * TILE_SIZE,
+                    0.0f,
+                    ORIGIN_COORDINATE + (float)j * TILE_SIZE
+                );
+                if (((i / STAGE_COLOR_CYCLE) + (j / STAGE_COLOR_CYCLE)) % 2 == 0)
+                {
+                    Instantiate(fieldblock_prefab_white, tile_position, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(fieldblock_prefab_black, tile_position, Quaternion.identity);
+                }
+            }
+        }
     }
 
-    private void SetFinishUIsEnable(bool is_visible)
-    {
-        GameObject finish_uis = GameObject.FindGameObjectWithTag("FinishUIs");
-        finish_uis.GetComponent<Canvas>().enabled = is_visible;
-        return;
-    }
-
-    private void EnableCursorDisplay(bool is_enable)
+    private void DisplayCursor(bool is_enable)
     {
         if (is_enable)
         {
@@ -245,9 +292,27 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+    private void ConnectEventAction(bool is_connect_event)
+    {
+        if (is_connect_event)
+        {
+            AttackObject.BreakEvent += GenerateBreakEffect;
+            Target.DeadEvent += DeadTarget;
+            Player.GameOver += FinishGame;
+        }
+        else
+        {
+            AttackObject.BreakEvent -= GenerateBreakEffect;
+            Target.DeadEvent -= DeadTarget;
+            Player.GameOver -= FinishGame;
+        }
+        return;
+    }
+
+
     private void Update()
     {
-        SetPauseState();
+        TransitionPauseState();
         if (IsPausing())
         {
             return;
@@ -267,56 +332,37 @@ public class StageManager : MonoBehaviour
         }
         else if (is_game_started && !is_game_finished)
         {
-            left_time_sec -= Time.deltaTime;
-            
-            if (left_time_sec <= 0.0f)
-            {
-                left_time_sec = 0.0f;
-                TimeUpGame();
-            }else if(left_time_sec <= next_target_add_sec)
-            {
-                PlaySE(ADD_SPAWN_SE, Vector3.zero, ADD_SPAWN_BASE_VOLUME, false);
-                SpawnTarget();
-                next_target_add_sec -= ADD_TARGET_CYCLE_SEC;
-            }
-            TIMER_TEXT.text = $"{Mathf.Ceil(left_time_sec):00}";
+            UpdateTimelimitTimer();
         }
     }
 
-    private void SetPauseState()
+    private void TransitionPauseState()
     {
         if (is_game_finished)
         {
             if (IsPausing())
             {
                 Time.timeScale = 1.0f;
-                EnableCursorDisplay(true);
-                SetPauseUI(false);
+                DisplayCursor(true);
+                DisplayUI(PAUSE_UI_TAG,false);
             }
         }
         if (is_game_started && !is_game_finished && Input.GetKeyDown(KeyCode.P))
         {
-            PlaySE(PAUSE_SE, Vector3.zero, PAUSE_VOLUME, false);
+            PlaySE(PAUSE_SE_CLIP, Vector3.zero, PAUSE_BASE_VOLUME, false);
             if (IsPausing())
             {
                 Time.timeScale = 1.0f;
-                EnableCursorDisplay(false);
-                SetPauseUI(false);
+                DisplayCursor(false);
+                DisplayUI(PAUSE_UI_TAG, false);
             }
             else
             {
                 Time.timeScale = 0.0f;
-                EnableCursorDisplay(true);
-                SetPauseUI(true);
+                DisplayCursor(true);
+                DisplayUI(PAUSE_UI_TAG, true);
             }
         }
-        return;
-    }
-
-    private void SetPauseUI(bool is_visible)
-    {
-        GameObject pause_ui = GameObject.FindGameObjectWithTag("PauseUI");
-        pause_ui.GetComponent<Canvas>().enabled = is_visible;
         return;
     }
 
@@ -333,43 +379,61 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void ResumeGame()
+    private void StartGame()
     {
-        Time.timeScale = 1.0f;
-        EnableCursorDisplay(false);
-        SetPauseUI(false);
-        PlaySE(PAUSE_SE, Vector3.zero, PAUSE_VOLUME, false);
+        SpawnTarget();
+        is_game_started = true;
+        GameStart.Invoke();
         return;
     }
 
-    private void SetFieldTiles(){
-        float TILE_SIZE = fieldblock_prefab_white.transform.localScale.x;
-        Vector3 tile_position;
-        Transform PARENT_TRANSFORM = this.transform;
-        float ORIGIN_COORDINATE;
-        if(STAGE_SIZE%2==0){
-            ORIGIN_COORDINATE = (STAGE_SIZE/2) * TILE_SIZE * (-1.0f) + (TILE_SIZE/2.0f);
-        }else{
-            ORIGIN_COORDINATE = (STAGE_SIZE/2) * TILE_SIZE * (-1.0f);
+    private void SpawnTarget()
+    {
+        Vector3 player_position = GameObject.FindGameObjectWithTag("Player").transform.position;
+        Vector3 spawn_position = new Vector3(
+                Random.Range(SPAWN_RANGE_MIN.x, SPAWN_RANGE_MAX.x),
+                Random.Range(SPAWN_RANGE_MIN.y, SPAWN_RANGE_MAX.y),
+                Random.Range(SPAWN_RANGE_MIN.z, SPAWN_RANGE_MAX.z)
+            );
+        while(!ENABLE_NEAR_SPAWN && (Vector3.Distance(player_position,spawn_position) <= DONT_SPAWN_RADIUS)){
+            spawn_position = new Vector3(
+                Random.Range(SPAWN_RANGE_MIN.x, SPAWN_RANGE_MAX.x),
+                Random.Range(SPAWN_RANGE_MIN.y, SPAWN_RANGE_MAX.y),
+                Random.Range(SPAWN_RANGE_MIN.z, SPAWN_RANGE_MAX.z)
+            );
         }
-        for(int i=0;i<STAGE_SIZE;i++){
-            for(int j=0;j<STAGE_SIZE;j++){
-                tile_position = new Vector3(
-                    ORIGIN_COORDINATE + (float)i * TILE_SIZE,
-                    0.0f,
-                    ORIGIN_COORDINATE + (float)j * TILE_SIZE
-                );
-                if (((i / STAGE_COLOR_CYCLE) + (j / STAGE_COLOR_CYCLE)) % 2 == 0)
-                {
-                    Instantiate(fieldblock_prefab_white, tile_position, Quaternion.identity);
-                }
-                else
-                {
-                    Instantiate(fieldblock_prefab_black, tile_position, Quaternion.identity);
-                }
-            }
-        }
+        GameObject spawn_target_object = Instantiate(TARGET_PREFAB, this.transform.position+spawn_position, Quaternion.identity);
+        return;
     }
+
+    private void TimeUpGame()
+    {
+        GameStop.Invoke();
+        FinishGame();
+        return;
+    }
+
+    private void FinishGame()
+    {
+        PlaySE(FINISH_SE_CLIP, Vector3.zero, FINISH_SE_BASE_VOLUME, false);
+        is_game_finished = true;
+        DisplayCursor(true);
+        DisplayUI(FINISH_UI_TAG, true);
+        return;
+    }
+
+    private void UpdateTimelimitTimer()
+    {
+        left_time_sec -= Time.deltaTime;
+        if (left_time_sec <= 0.0f)
+        {
+            left_time_sec = 0.0f;
+            TimeUpGame();
+        }
+        timer_textmesh.text = $"{Mathf.Ceil(left_time_sec):00}";
+        return;
+    }
+
 
     private void PlayBGM(AudioClip bgm_clip, float bgm_volume)
     {
@@ -377,44 +441,9 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = bgm_clip;
-        audio_source.volume = bgm_volume * PlayerPrefs.GetFloat("BGMVolume");
+        audio_source.volume = bgm_volume * PlayerPrefs.GetFloat(BGM_PREFS_KEY);
         audio_source.loop = true;
         audio_source.Play();
-        return;
-    }
-
-    private void SpawnTarget()
-    {
-        Vector3 spawn_position = new Vector3(
-                Random.Range(SPAWN_RANGE_MIN.x, SPAWN_RANGE_MAX.x),
-                Random.Range(SPAWN_RANGE_MIN.y, SPAWN_RANGE_MAX.y),
-                Random.Range(SPAWN_RANGE_MIN.z, SPAWN_RANGE_MAX.z)
-            );
-        GameObject spawn_target_object = Instantiate(TARGET_PREFAB, this.transform.position+spawn_position, Quaternion.identity);
-        return;
-    }
-
-    private void ConnectEventAction(bool connect_event)
-    {
-        if (connect_event)
-        {
-            AttackObject.BreakEvent += GenerateBreakEffect;
-            Target.DeadEvent += DeadTarget;
-            Player.GameOver += FinishGame;
-        }
-        else
-        {
-            AttackObject.BreakEvent -= GenerateBreakEffect;
-            Target.DeadEvent -= DeadTarget;
-            Player.GameOver -= FinishGame;
-        }
-        return;
-    }
-
-    private void GenerateBreakEffect(Vector3 break_position, float break_radius)
-    {
-        PlaySE(BREAK_SE,break_position, break_radius* BREAK_BASE_VOLUME, true);
-        GenerateBreakParticle(break_position, break_radius);
         return;
     }
 
@@ -425,7 +454,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = se_clip;
-        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
         float blend_3d = 0.0f;
         if (is_3d)
         {
@@ -445,13 +474,21 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = se_clip;
-        audio_source.volume = se_volume * PlayerPrefs.GetFloat("SEVolume");
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
         const float SOUND_2D = 0.0f;
         audio_source.spatialBlend = SOUND_2D;
         audio_source.Play();
 
         Destroy(audio_object, se_clip.length);
         await Awaitable.WaitForSecondsAsync(se_clip.length);
+        return;
+    }
+
+
+    private void GenerateBreakEffect(Vector3 break_position, float break_radius)
+    {
+        PlaySE(BREAK_SE_CLIP,break_position, break_radius* BREAK_BASE_VOLUME, true);
+        GenerateBreakParticle(break_position, break_radius);
         return;
     }
 
@@ -473,13 +510,21 @@ public class StageManager : MonoBehaviour
         return;
     }
 
+
     private void DeadTarget(Vector3 dead_position)
     {
         beat_cnt++;
-        BEAT_TEXT.text = String.Format("{0:000}",beat_cnt);
-        PlaySE(BEAT_SE,dead_position,BEAT_SOUND_VOLUME,true);
+        beat_count_textmesh.text = String.Format("{0:000}",beat_cnt);
+        PlaySE(BEAT_SE_CLIP,dead_position,BEAT_SE_BASE_VOLUME,true);
         FlashDeadLight(dead_position);
         SpawnTarget();
+        if(beat_cnt >= next_target_add_cnt)
+        {
+            appear_cnt += 1;
+            next_target_add_cnt += appear_cnt * SPAWN_SCORE_RATE;
+            PlaySE(ADD_SPAWN_SE_CLIP, Vector3.zero, ADD_SPAWN_SE_BASE_VOLUME, false);
+            SpawnTarget();
+        }
         return;
     }
 
@@ -492,19 +537,13 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-    private void FinishGame()
-    {
-        PlaySE(FINISH_SE, Vector3.zero, FINISH_SE_VOLUME, false);
-        is_game_finished = true;
-        EnableCursorDisplay(true);
-        SetFinishUIsEnable(true);
-        return;
-    }
 
-    private void TimeUpGame()
+    public void ResumeGame()
     {
-        TimeUp.Invoke();
-        FinishGame();
+        Time.timeScale = 1.0f;
+        DisplayCursor(false);
+        DisplayUI(PAUSE_UI_TAG, false);
+        PlaySE(PAUSE_SE_CLIP, Vector3.zero, PAUSE_BASE_VOLUME, false);
         return;
     }
 
@@ -518,8 +557,7 @@ public class StageManager : MonoBehaviour
             {
                 UpdateRanking();
             }
-            await AsyncPlaySE2D(START_SE, START_VOLUME);
-            
+            await AsyncPlaySE2D(START_SE_CLIP, START_SE_BASE_VOLUME);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         return;
@@ -537,15 +575,14 @@ public class StageManager : MonoBehaviour
         if (!is_game_leaving)
         {
             is_game_leaving = true;
-            TimeUp.Invoke();
+            GameStop.Invoke();
             PrepareLeaveScene();
             Time.timeScale = 1.0f;
             if (is_game_finished)
             {
                 UpdateRanking();
             }
-            await AsyncPlaySE2D(TITLE_BACK_SE, TITLE_BACK_VOLUME);
-            
+            await AsyncPlaySE2D(TITLE_BACK_SE_CLIP, TITLE_BACK_SE_BASE_VOLUME);
             SceneManager.LoadScene("TitleScene");
         }
         return;
@@ -555,11 +592,11 @@ public class StageManager : MonoBehaviour
     {
         int[] scores =
         {
-            PlayerPrefs.GetInt("Score1st"),
-            PlayerPrefs.GetInt("Score2nd"),
-            PlayerPrefs.GetInt("Score3rd"),
-            PlayerPrefs.GetInt("Score4th"),
-            PlayerPrefs.GetInt("Score5th"),
+            PlayerPrefs.GetInt("Score1st",0),
+            PlayerPrefs.GetInt("Score2nd",0),
+            PlayerPrefs.GetInt("Score3rd",0),
+            PlayerPrefs.GetInt("Score4th",0),
+            PlayerPrefs.GetInt("Score5th",0),
             beat_cnt
         };
         Array.Sort(scores);

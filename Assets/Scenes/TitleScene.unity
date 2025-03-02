@@ -223,10 +223,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59b9cdf21b652cd499698b3ecb5fb8a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WINDOW_SE: {fileID: 8300000, guid: 00b0961f7f5d3174ab597139126de60b, type: 3}
-  WINDOW_VOLUME: 0.3
-  START_SE: {fileID: 8300000, guid: 6dafe43c6a47af24a83634d10032b40c, type: 3}
-  START_VOLUME: 0.3
+  WINDOW_SE_CLIP: {fileID: 8300000, guid: 00b0961f7f5d3174ab597139126de60b, type: 3}
+  WINDOW_BASE_VOLUME: 0.2
+  START_SE_CLIP: {fileID: 8300000, guid: 6dafe43c6a47af24a83634d10032b40c, type: 3}
+  START_BASE_VOLUME: 0.2
 --- !u!4 &25806268
 Transform:
   m_ObjectHideFlags: 0
@@ -545,7 +545,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: ManualUI
+          m_StringArgument: RuleWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &63037724
@@ -634,7 +634,7 @@ GameObject:
   - component: {fileID: 83083188}
   - component: {fileID: 83083187}
   m_Layer: 5
-  m_Name: ManualDescription (2)
+  m_Name: KeyText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -907,7 +907,7 @@ GameObject:
   - component: {fileID: 137432328}
   - component: {fileID: 137432327}
   m_Layer: 5
-  m_Name: ManualWindow
+  m_Name: RuleWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1296,7 +1296,7 @@ GameObject:
   - component: {fileID: 265961549}
   - component: {fileID: 265961548}
   m_Layer: 5
-  m_Name: ManualDescription (1)
+  m_Name: Colons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1710,7 +1710,7 @@ GameObject:
   - component: {fileID: 296105658}
   - component: {fileID: 296105657}
   m_Layer: 5
-  m_Name: SettingTitle
+  m_Name: RuleTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2284,7 +2284,7 @@ GameObject:
   - component: {fileID: 493081902}
   - component: {fileID: 493081901}
   m_Layer: 5
-  m_Name: ManualDescription
+  m_Name: MoveText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2493,14 +2493,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: LaunchWindow
+        m_MethodName: OpenWindow
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: ManualUI
+          m_StringArgument: RuleWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &524385576
@@ -2766,7 +2766,7 @@ GameObject:
   - component: {fileID: 596809033}
   - component: {fileID: 596809032}
   m_Layer: 5
-  m_Name: ColonText
+  m_Name: Colons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3247,7 +3247,7 @@ GameObject:
   - component: {fileID: 739179335}
   m_Layer: 0
   m_Name: SettingCanvas
-  m_TagString: SettingUIs
+  m_TagString: SettingWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3995,7 +3995,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: SettingUIs
+          m_StringArgument: SettingWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &986261899
@@ -4128,7 +4128,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: RankingUI
+          m_StringArgument: RankingWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1030260087
@@ -4891,14 +4891,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: LaunchWindow
+        m_MethodName: OpenWindow
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: RankingUI
+          m_StringArgument: RankingWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1307021324
@@ -4951,7 +4951,7 @@ GameObject:
   - component: {fileID: 1315875606}
   - component: {fileID: 1315875605}
   m_Layer: 5
-  m_Name: Rule
+  m_Name: RuleDesctiption
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5088,8 +5088,8 @@ GameObject:
   - component: {fileID: 1437914204}
   - component: {fileID: 1437914203}
   m_Layer: 0
-  m_Name: ManualCanvas
-  m_TagString: ManualUI
+  m_Name: RuleCanvas
+  m_TagString: RuleWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5422,7 +5422,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: UpdateSliders
+        m_MethodName: LoadAllSliderValues
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5526,7 +5526,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: UpdateSliders
+        m_MethodName: LoadAllSliderValues
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5686,7 +5686,7 @@ GameObject:
   - component: {fileID: 1576260032}
   m_Layer: 0
   m_Name: RankingCanvas
-  m_TagString: RankingUI
+  m_TagString: RankingWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6718,7 +6718,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: UpdateSliders
+        m_MethodName: LoadAllSliderValues
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7108,7 +7108,7 @@ GameObject:
   - component: {fileID: 2115097345}
   m_Layer: 5
   m_Name: ScoreText
-  m_TagString: RankingText
+  m_TagString: RankingScoreText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7324,14 +7324,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 25806267}
         m_TargetAssemblyTypeName: TitleSceneManager, Assembly-CSharp
-        m_MethodName: LaunchWindow
+        m_MethodName: OpenWindow
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: SettingUIs
+          m_StringArgument: SettingWindow
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2133678109

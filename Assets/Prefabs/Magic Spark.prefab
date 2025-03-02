@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8201537578442470123, guid: 746160fb439fd164b920654a61492e33, type: 3}
       propertyPath: BREAK_RADIUS
-      value: 1
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 8388896230478440762, guid: 746160fb439fd164b920654a61492e33, type: 3}
       propertyPath: m_Color.b

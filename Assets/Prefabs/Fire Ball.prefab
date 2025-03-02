@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: attack_spark_prefab
       value: 
       objectReference: {fileID: 5100261262096094036, guid: 565fdbd7006364743a17c47b4d21c712, type: 3}
+    - target: {fileID: 6067299722169504832, guid: 26ddbe10cf87df44589d655bc3c31472, type: 3}
+      propertyPath: object_lifetime_sec
+      value: 0.7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

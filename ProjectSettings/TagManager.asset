@@ -4,18 +4,23 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - FinishUIs
   - StartUI
-  - StartCountdown
   - BGMSlider
   - SESlider
   - CameraSensitivitySlider
-  - SettingUIs
   - SliderLabel
-  - ManualUI
+  - RuleWindow
+  - SettingWindow
+  - RankingWindow
+  - PauseWindow
+  - RankingScoreText
   - PauseUI
-  - RankingUI
-  - RankingText
+  - TimerText
+  - BeatCountText
+  - StartCountdownText
+  - PlayerCamera
+  - FinishUI
+  - PlayerLight
   layers:
   - Default
   - TransparentFX
