@@ -17,132 +17,115 @@ public class Player : MonoBehaviour
     private bool is_game_finished = false;
     public static event System.Action GameOver;
 
+    private const string PLAYER_CAMERA_TAG = "PlayerCamera";
+    private const string PLAYER_LIGHT_TAG = "PlayerLight";
+
+    private const string SE_PREFS_KEY = "SEVolume";
+    private const string CAMERA_PREFS_KEY = "CameraSensitivity";
+
     [Header("攻撃情報")]
-    [SerializeField]
     [Tooltip("発射する火の玉のプレハブ")]
-    private GameObject fireball_prefab;
-    
     [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("玉の発射速度")]
+    private GameObject FIREBALL_PREFAB;
+    
+    [Tooltip("玉の発射速度"), Min(0.1f)]
+    [SerializeField]
     private float SHOT_SPEED = 10.0f;
 
+    [Tooltip("玉の連射間隔"), Range(0.3f,2.0f)]
     [SerializeField]
-    [Range(0.3f,2.0f)]
-    [Tooltip("玉の連射間隔")]
     private float SHOT_CYCLE = 0.1f;
 
+    [Tooltip("発射時の効果音ファイル")]
     [SerializeField]
-    [Tooltip("発射時の効果音")]
-    private AudioClip SHOT_SE;
+    private AudioClip SHOT_SE_CLIP;
 
+    [Tooltip("発射時の効果音ボリューム"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("発射時の効果音ボリューム")]
-    private float SHOT_VOLUME;
+    private float SHOT_SE_BASE_VOLUME;
 
     [Header("気絶情報")]
+    [Tooltip("気絶時のカメラ感度"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("気絶時のカメラ感度")]
-    private float FAINTING_CAMERA_SLOW_RATE = 0.1f;
+    private float FAINTING_CAMERA_SLOW_SENSITIVITY = 0.1f;
 
-    [SerializeField]
     [Tooltip("気絶時の光の色")]
+    [SerializeField]
     private Color FAINTING_LIGHT_COLOR;
 
-    [SerializeField]
     [Tooltip("被弾時の効果音")]
-    private AudioClip HIT_SE;
-
     [SerializeField]
-    [Range(0.0f,99.0f)]
-    [Tooltip("被弾後の無敵時間")]
+    private AudioClip HIT_SE_CLIP;
+
+    [Tooltip("被弾時の効果音ボリューム"), Range(0.0f, 1.0f)]
+    [SerializeField]
+    private float HIT_SE_BASE_VOLUME;
+
+    [Tooltip("被弾後の無敵時間"), Range(0.0f,99.0f)]
+    [SerializeField]
     private float INVINCIBLE_SEC;
 
-    [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("被弾時の効果音ボリューム")]
-    private float HIT_VOLUME;
 
     [Header("その他")]
+    [Tooltip("移動速度"), Min(0.1f)]
     [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("移動速度")]
     private float MOVE_SPEED = 1.0f;
 
+    [Tooltip("カメラ感度"), Range(0.1f, 100.0f)]
     [SerializeField]
-    [Range(0.1f, 100.0f)]
-    [Tooltip("カメラ感度")]
     private float CAMERA_SENSITIVITY = 10.0f;
 
+    [Tooltip("落下判定となるY座標"), Range(-20.0f,0.0f)]
     [SerializeField]
-    [Range(-20.0f,0.0f)]
-    [Tooltip("落下判定となるY座標")]
     private float DROP_POSITION_Y;
 
-    [SerializeField]
     [Tooltip("落下時の効果音")]
-    private AudioClip FALL_SE;
-
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("落下時の効果音ボリューム")]
-    private float FALL_VOLUME;
+    private AudioClip FALL_SE_CLIP;
+
+    [Tooltip("落下時の効果音ボリューム"), Range(0.0f, 1.0f)]
+    [SerializeField]
+    private float FALL_SE_BASE_VOLUME;
 
 
     private void Start()
     {
+        SetupGameObjectsAndComponents();
+        ConnectEventAction(true);
+        this.gameObject.transform.position = new Vector3(0.0f, 2.0f, 0.0f);
+    }
+
+    private void SetupGameObjectsAndComponents()
+    {
         player_rigidbody = this.GetComponent<Rigidbody>();
         player_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         character_controller = this.GetComponent<CharacterController>();
-        camera_transform = this.transform.Find("Main Camera").transform;
-        player_light = this.transform.Find("Point Light").GetComponent<Light>();
-        this.gameObject.transform.position = new Vector3(0.0f, 2.0f, 0.0f);
-        ConnectEventAction(true);
+        camera_transform = GameObject.FindWithTag(PLAYER_CAMERA_TAG).transform;
+        player_light = GameObject.FindWithTag(PLAYER_LIGHT_TAG).GetComponent<Light>();
+        return;
     }
 
-    private void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool is_connect_event)
     {
-        if (connect_event)
+        if (is_connect_event)
         {
             StageManager.GameStart += StartGame;
-            StageManager.TimeUp += SetActiveFalse;
+            StageManager.GameStop += SetActiveFalse;
             StageManager.LeaveScene += PrepareLeaveScene;
         }
         else
         {
             StageManager.GameStart -= StartGame;
-            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.GameStop -= SetActiveFalse;
             StageManager.LeaveScene -= PrepareLeaveScene;
         }
         return;
     }
 
-    private void StartGame()
-    {
-        is_game_started = true;
-        return;
-    }
-
-    private void PrepareLeaveScene()
-    {
-        ConnectEventAction(false);
-        return;
-    }
-
-    private void SetActiveFalse()
-    {
-        is_game_finished = true; 
-        player_rigidbody.linearVelocity = Vector3.zero;
-        player_rigidbody.isKinematic = true;
-        return;
-    }
-
     private void Update()
     {
-        const float STOP_TIME_SCALE = 0.5f;
-        if (Time.timeScale < STOP_TIME_SCALE)
+        const float STOP_TIME_BORDER = 0.5f;
+        if (Time.timeScale < STOP_TIME_BORDER)
         {
             return;
         }
@@ -155,7 +138,9 @@ public class Player : MonoBehaviour
             MoveOnlyGravity();
             return;
         }
+
         MoveCamera();
+
         if (is_knockbacking)
         {
             ShakeCamera();
@@ -187,11 +172,69 @@ public class Player : MonoBehaviour
         }
         if (this.transform.position.y <= DROP_POSITION_Y)
         {
-            PlaySE(FALL_SE, FALL_VOLUME);
+            PlaySE(FALL_SE_CLIP, FALL_SE_BASE_VOLUME);
             GameOver.Invoke();
             SetActiveFalse();
         }
     }
+
+
+    private void MoveCharacter(){
+        Vector3 front_back_input = this.transform.forward * Input.GetAxis("Vertical");
+        Vector3 right_left_input = this.transform.right * Input.GetAxis("Horizontal");
+        Vector3 velocity = (front_back_input + right_left_input).normalized * MOVE_SPEED;
+        if(!character_controller.isGrounded){
+            velocity.y += Physics.gravity.y;
+        }
+        character_controller.Move(velocity * Time.deltaTime);
+        return;
+    }
+
+    private void MoveOnlyGravity()
+    {
+        Vector3 velocity = Vector3.zero;
+        if (!character_controller.isGrounded)
+        {
+            velocity.y += Physics.gravity.y;
+        }
+        character_controller.Move(velocity * Time.deltaTime);
+        return;
+    }
+
+    private void KnockBack(Vector3 hit_direction)
+    {
+        player_light.color = FAINTING_LIGHT_COLOR;
+        is_knockbacking = true;
+        float FORCE_POWER = 5.0f;
+        Vector3 knockback_direction = new Vector3(
+            - hit_direction.x,
+            0.0f,
+            - hit_direction.z
+        ).normalized;
+        knockback_direction.y = 1.0f;
+        knockback_velocity = knockback_direction.normalized * FORCE_POWER;
+        character_controller.Move(knockback_velocity * Time.deltaTime);
+        const float KNOCKBACK_SEC = 2.0f;
+        Invoke(nameof(FinishKnockBack), KNOCKBACK_SEC);
+        PlaySE(HIT_SE_CLIP,HIT_SE_BASE_VOLUME);
+        return;
+    }
+
+    private void FinishKnockBack()
+    {
+        is_knockbacking = false;
+        player_light.color = new Color(1, 1, 1);
+        camera_transform.localPosition = Vector3.zero;
+        Invoke(nameof(FinishInvincible), INVINCIBLE_SEC);
+        return;
+    }
+
+    private void FinishInvincible()
+    {
+        is_hittable = true;
+        return;
+    }
+
 
     private void MoveCamera(){
         Vector2 mouse_input = new Vector2(
@@ -200,11 +243,11 @@ public class Player : MonoBehaviour
         );
         if (is_knockbacking)
         {
-            mouse_input *= FAINTING_CAMERA_SLOW_RATE;
+            mouse_input *= FAINTING_CAMERA_SLOW_SENSITIVITY;
         }
         else
         {
-            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat("CameraSensitivity", 1.0f);
+            mouse_input *= CAMERA_SENSITIVITY * PlayerPrefs.GetFloat(CAMERA_PREFS_KEY, 1.0f);
         }
         this.transform.rotation = Quaternion.Euler(
             this.transform.rotation.eulerAngles.x,
@@ -240,63 +283,6 @@ public class Player : MonoBehaviour
         return clamped_angles;
     }
 
-    private void MoveCharacter(){
-        Vector3 front_back_input = this.transform.forward * Input.GetAxis("Vertical");
-        Vector3 right_left_input = this.transform.right * Input.GetAxis("Horizontal");
-        Vector3 velocity = (front_back_input + right_left_input).normalized * MOVE_SPEED;
-        if(!character_controller.isGrounded){
-            velocity.y += Physics.gravity.y;
-        }
-        character_controller.Move(velocity * Time.deltaTime);
-        return;
-    }
-
-    private void MoveOnlyGravity()
-    {
-        Vector3 velocity = Vector3.zero;
-        if (!character_controller.isGrounded)
-        {
-            velocity.y += Physics.gravity.y;
-        }
-        character_controller.Move(velocity * Time.deltaTime);
-        return;
-    }
-
-    private void ShotFireball(){
-        Vector3 SHOT_DIRECTION = new Vector3(
-            this.transform.forward.x * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad)),
-            - Mathf.Sin(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad),
-            this.transform.forward.z * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad))
-        ).normalized;
-        Vector3 shot_position = this.transform.position + SHOT_DIRECTION;
-        GameObject fireball = Instantiate(fireball_prefab, shot_position, Quaternion.identity);
-        Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
-        Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
-        fireball_rigidbody.linearVelocity = shot_velocity;
-        PlaySE(SHOT_SE,SHOT_VOLUME);
-        return;
-    }
-
-    private void PlaySE(AudioClip se_clip, float base_volume)
-    {
-        AudioSource se_source = this.AddComponent<AudioSource>();
-        se_source.clip = se_clip;
-        se_source.volume = base_volume * PlayerPrefs.GetFloat("SEVolume");
-        se_source.Play();
-        Destroy(se_source, se_clip.length);
-        return;
-    }
-
-    private void OnCollisionEnter(Collision collision_object)
-    {
-        int ENEMY_BALL_LAYERS = LayerMask.NameToLayer("Enemy Ball");
-        if (collision_object.gameObject.layer == ENEMY_BALL_LAYERS && is_hittable)
-        {
-            is_hittable = false;
-            KnockBack(collision_object.transform.position - this.transform.position);
-        }
-    }
-
     private void ShakeCamera()
     {
         float SHAKE_POWER = 0.1f;
@@ -310,37 +296,62 @@ public class Player : MonoBehaviour
         return;
     }
 
-    private void KnockBack(Vector3 hit_direction)
-    {
-        player_light.color = FAINTING_LIGHT_COLOR;
-        is_knockbacking = true;
-        float FORCE_POWER = 5.0f;
-        Vector3 knockback_direction = new Vector3(
-            - hit_direction.x,
-            0.0f,
-            - hit_direction.z
+
+    private void ShotFireball(){
+        Vector3 SHOT_DIRECTION = new Vector3(
+            this.transform.forward.x * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad)),
+            - Mathf.Sin(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad),
+            this.transform.forward.z * Mathf.Sqrt(Mathf.Cos(camera_transform.rotation.eulerAngles.x * Mathf.Deg2Rad))
         ).normalized;
-        knockback_direction.y = 1.0f;
-        knockback_velocity = knockback_direction.normalized * FORCE_POWER;
-        character_controller.Move(knockback_velocity * Time.deltaTime);
-        const float KNOCKBACK_SEC = 2.0f;
-        Invoke(nameof(FinishKnockBack), KNOCKBACK_SEC);
-        PlaySE(HIT_SE,HIT_VOLUME);
+        Vector3 shot_position = this.transform.position + SHOT_DIRECTION;
+        GameObject fireball = Instantiate(FIREBALL_PREFAB, shot_position, Quaternion.identity);
+        Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
+        Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
+        fireball_rigidbody.linearVelocity = shot_velocity;
+        PlaySE(SHOT_SE_CLIP,SHOT_SE_BASE_VOLUME);
         return;
     }
 
-    private void FinishKnockBack()
+
+    private void StartGame()
     {
-        is_knockbacking = false;
-        player_light.color = new Color(1, 1, 1);
-        camera_transform.localPosition = Vector3.zero;
-        Invoke(nameof(FinishInvincible), INVINCIBLE_SEC);
+        is_game_started = true;
         return;
     }
 
-    private void FinishInvincible()
+    private void PrepareLeaveScene()
     {
-        is_hittable = true;
+        ConnectEventAction(false);
+        return;
+    }
+
+    private void SetActiveFalse()
+    {
+        is_game_finished = true; 
+        player_rigidbody.linearVelocity = Vector3.zero;
+        player_rigidbody.isKinematic = true;
+        return;
+    }
+
+
+    private void OnCollisionEnter(Collision collision_object)
+    {
+        int ENEMY_BALL_LAYERS = LayerMask.NameToLayer("Enemy Ball");
+        if (collision_object.gameObject.layer == ENEMY_BALL_LAYERS && is_hittable)
+        {
+            is_hittable = false;
+            KnockBack(collision_object.transform.position - this.transform.position);
+        }
+    }
+
+
+    private void PlaySE(AudioClip se_clip, float base_volume)
+    {
+        AudioSource se_source = this.AddComponent<AudioSource>();
+        se_source.clip = se_clip;
+        se_source.volume = base_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
+        se_source.Play();
+        Destroy(se_source, se_clip.length);
         return;
     }
 }

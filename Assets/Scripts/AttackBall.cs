@@ -18,6 +18,7 @@ public class AttackBall : AttackObject
     [SerializeField, Tooltip("âŒÇÃï≤Ç™èoÇ»Ç¢ïbêî"), Min(0.1f)]
     private float no_spark_sec = 0.2f;
 
+
     protected override void Start()
     {
         base.Start();
@@ -29,6 +30,7 @@ public class AttackBall : AttackObject
                                     ).normalized * MAX_ROTATION_SPEED;
         return;
     }
+
 
     protected override void Update()
     {
@@ -50,12 +52,13 @@ public class AttackBall : AttackObject
                 SpawnFireSpark();
                 cnt_flare_spark_cycle = 0.0f;
             }
-            if(this.transform.position.y <= -10){
+            if(this.transform.position.y <= -10.0f){
                 base.DestroyThisGameObject();
             }
         }
         return;
     }
+
 
     protected override void OnCollisionEnter(Collision collision_object)
     {

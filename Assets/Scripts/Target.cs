@@ -10,69 +10,65 @@ public class Target : MonoBehaviour
     private bool is_active = true;
     public static event System.Action<Vector3> DeadEvent;
 
+    private const string SE_PREFS_KEY = "SEVolume";
+
     [Header("移動情報")]
+    [Tooltip("プレイヤーとの距離感"), Range(0.1f, 10.0f)]
     [SerializeField]
-    [Range(0.1f, 10.0f)]
-    [Tooltip("プレイヤーとの距離感")]
     private float DISTANCE_FROM_PLAYER;
 
+    [Tooltip("距離の許容率"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("距離の許容率")]
     private float DISTANCE_ALLOW_RATE;
 
+    [Tooltip("移動速度"), Min(0.1f)]
     [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("移動速度")]
     private float MOVE_SPEED;
 
+
     [Header("攻撃情報")]
+    [Tooltip("放つ火の玉のプレハブ")]
     [SerializeField]
-    [Tooltip("放つ火の玉")]
     private GameObject ATTACK_BALL_PREFAB;
 
+    [Tooltip("火の玉の速度"), Min(0.1f)]
     [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("火の玉の速度")]
     private float SHOT_SPEED = 10.0f;
 
+    [Tooltip("火の玉の発射間隔"), Range(0.1f, 99.9f)]
     [SerializeField]
-    [Range(0.1f, 99.9f)]
-    [Tooltip("火の玉の発射間隔")]
     private float SHOT_CYCLE_SEC = 2.0f;
 
+    [Tooltip("火の玉の発射間隔の乱数率"), Range(0.0f, 1.0f)]
     [SerializeField]
-    [Range(0.0f, 1.0f)]
-    [Tooltip("火の玉の発射間隔の乱数加数")]
     private float SHOT_CYCLE_RANDOM_RATE;
 
-    [SerializeField]
     [Tooltip("火の玉発射効果音")]
-    private AudioClip SHOT_SE;
-
     [SerializeField]
-    [Range(0.0f,1.0f)]
-    [Tooltip("火の玉発射効果音ボリューム")]
-    private float SHOT_VOLUME;
+    private AudioClip SHOT_SE_CLIP;
+
+    [Tooltip("火の玉発射効果音ボリューム"), Range(0.0f,1.0f)]
+    [SerializeField]
+    private float SHOT_SE_BASE_VOLUME;
+
 
     [Header("死亡時情報")]
+    [Tooltip("死亡時に生成するオブジェクトのプレハブ")]
     [SerializeField]
-    [Tooltip("死亡時に生成する破壊オブジェクト")]
     private GameObject DEAD_OBJECT_PREFAB;
 
+    [Tooltip("死亡時にオブジェクトを生成する数"), Range(0, 10)]
     [SerializeField]
-    [Range(0, 10)]
-    [Tooltip("死亡時にオブジェクトを生成する数")]
     private int DEAD_OBJECT_NUM = 10;
 
+    [Tooltip("死亡時に放出するオブジェクトの初速度"), Range(0.1f, 10.0f)]
     [SerializeField]
-    [Range(0.1f, 10.0f)]
-    [Tooltip("死亡時に放出するオブジェクトの初速度")]
     private float DEAD_OBJECT_EMIT_SPEED = 10.0f;
 
-    [SerializeField]
     [Tooltip("死亡時に放出するパーティクルプレハブ")]
+    [SerializeField]
     private GameObject DEAD_PARTICLE;
+
 
     private void Start()
     {
@@ -82,43 +78,33 @@ public class Target : MonoBehaviour
         cnt_shot_cycle = CalcShotCycle();
     }
 
-    private float CalcShotCycle()
+    private void ConnectEventAction(bool is_connect_event)
     {
-        return SHOT_CYCLE_SEC * (1.0f + Random.Range(0.0f, SHOT_CYCLE_RANDOM_RATE));
-    }
-
-    private void ConnectEventAction(bool connect_event)
-    {
-        if (connect_event)
+        if (is_connect_event)
         {
-            StageManager.TimeUp += SetActiveFalse;
+            StageManager.GameStop += SetActiveFalse;
             StageManager.LeaveScene += PrepareLeaveScene;
             Player.GameOver += SetActiveFalse;
         }
         else
         {
-            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.GameStop -= SetActiveFalse;
             StageManager.LeaveScene -= PrepareLeaveScene;
             Player.GameOver -= SetActiveFalse;
         }
         return;
     }
 
-    private void PrepareLeaveScene()
+    private float CalcShotCycle()
     {
-        ConnectEventAction(false);
-        return;
+        return SHOT_CYCLE_SEC * (1.0f + Random.Range(0.0f, SHOT_CYCLE_RANDOM_RATE));
     }
 
-    private void SetActiveFalse()
-    {
-        is_active = false;
-    }
 
     private void Update()
     {
-        const float STOP_TIME_SCALE = 0.5f;
-        if (Time.timeScale < STOP_TIME_SCALE)
+        const float STOP_TIME_BORDER = 0.5f;
+        if (Time.timeScale < STOP_TIME_BORDER)
         {
             return;
         }
@@ -171,27 +157,34 @@ public class Target : MonoBehaviour
 
     private void ShotFireBall()
     {
-        Vector3 SHOT_DIRECTION = (PLAYER_GAMEOBJECT.transform.position - this.transform.position).normalized;
+        Vector3 player_foot_position = new Vector3(
+            PLAYER_GAMEOBJECT.transform.position.x,
+            0.5f,
+            PLAYER_GAMEOBJECT.transform.position.z
+            );
+        Vector3 SHOT_DIRECTION = (player_foot_position - this.transform.position).normalized;
         Vector3 shot_position = this.transform.position + SHOT_DIRECTION * 2.0f;
         GameObject fireball = Instantiate(ATTACK_BALL_PREFAB, shot_position, Quaternion.identity);
         Rigidbody fireball_rigidbody = fireball.GetComponent<Rigidbody>();
         Vector3 shot_velocity = SHOT_DIRECTION * SHOT_SPEED;
         fireball_rigidbody.linearVelocity = shot_velocity;
-        PlaySE(SHOT_SE, SHOT_VOLUME);
+        PlaySE(SHOT_SE_CLIP, SHOT_SE_BASE_VOLUME);
         return;
     }
 
-    private void PlaySE(AudioClip se_clip, float base_volume)
+
+    private void PrepareLeaveScene()
     {
-        AudioSource se_source = this.AddComponent<AudioSource>();
-        se_source.clip = se_clip;
-        se_source.volume = base_volume * PlayerPrefs.GetFloat("SEVolume");
-        const float BLEND_3D = 1.0f;
-        se_source.spatialBlend = BLEND_3D;
-        se_source.Play();
-        Destroy(se_source, se_clip.length);
+        ConnectEventAction(false);
         return;
     }
+
+    private void SetActiveFalse()
+    {
+        is_active = false;
+        return;
+    }
+
 
     private void OnCollisionEnter(Collision collision_object)
     {
@@ -226,6 +219,19 @@ public class Target : MonoBehaviour
             deadobject_rigidbody.linearVelocity = emit_velocity;
         }
         Instantiate(DEAD_PARTICLE, dead_position, Quaternion.identity);
+        return;
+    }
+
+
+    private void PlaySE(AudioClip se_clip, float base_volume)
+    {
+        AudioSource se_source = this.AddComponent<AudioSource>();
+        se_source.clip = se_clip;
+        se_source.volume = base_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
+        const float BLEND_3D = 1.0f;
+        se_source.spatialBlend = BLEND_3D;
+        se_source.Play();
+        Destroy(se_source, se_clip.length);
         return;
     }
 }

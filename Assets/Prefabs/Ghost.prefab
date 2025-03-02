@@ -5762,6 +5762,7 @@ GameObject:
   - component: {fileID: 3775392909603609245}
   - component: {fileID: 3279742408325675171}
   - component: {fileID: 3173840264315203070}
+  - component: {fileID: 9176426235577158}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -5837,6 +5838,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &9176426235577158
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4660696672294126116}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.025, y: 0.025, z: 0.025}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4779092718859683304
 GameObject:
   m_ObjectHideFlags: 0
@@ -5849,6 +5871,8 @@ GameObject:
   - component: {fileID: 786935865718180668}
   - component: {fileID: 2799761574375425420}
   - component: {fileID: 2612283787546046876}
+  - component: {fileID: 7023465296882125211}
+  - component: {fileID: 3083265409226629125}
   - component: {fileID: 8626685059424701701}
   m_Layer: 10
   m_Name: Ghost
@@ -5905,11 +5929,11 @@ MonoBehaviour:
   DISTANCE_ALLOW_RATE: 0.05
   MOVE_SPEED: 1
   ATTACK_BALL_PREFAB: {fileID: 6909083412043636764, guid: 7dc84980a58c0c445982867d4f31de87, type: 3}
-  SHOT_SPEED: 10
-  SHOT_CYCLE_SEC: 3
-  SHOT_CYCLE_RANDOM_RATE: 0.5
-  SHOT_SE: {fileID: 8300000, guid: 1548106f510cd9944aac54768c59899d, type: 3}
-  SHOT_VOLUME: 0.3
+  SHOT_SPEED: 7
+  SHOT_CYCLE_SEC: 2.5
+  SHOT_CYCLE_RANDOM_RATE: 1
+  SHOT_SE_CLIP: {fileID: 8300000, guid: 1548106f510cd9944aac54768c59899d, type: 3}
+  SHOT_SE_BASE_VOLUME: 0.2
   DEAD_OBJECT_PREFAB: {fileID: 1499896805199304275, guid: 55c84064c122a2d42bff9bbce6488ebe, type: 3}
   DEAD_OBJECT_NUM: 5
   DEAD_OBJECT_EMIT_SPEED: 5
@@ -5956,6 +5980,48 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2, y: 0.7, z: 1.2}
   m_Center: {x: 0, y: -1.35, z: -0.4}
+--- !u!65 &7023465296882125211
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4779092718859683304}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.5, y: 0.45, z: 2.5}
+  m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!65 &3083265409226629125
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4779092718859683304}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1.5, z: 2}
+  m_Center: {x: 0, y: 1.7, z: -0.2}
 --- !u!95 &8626685059424701701
 Animator:
   serializedVersion: 7
@@ -6161,6 +6227,7 @@ GameObject:
   - component: {fileID: 8798013105053495716}
   - component: {fileID: 1611382751098352191}
   - component: {fileID: 320387022674017206}
+  - component: {fileID: 6655796768254606519}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -6236,6 +6303,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6655796768254606519
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7600983069682679225}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.025, y: 0.025, z: 0.025}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8369158575518953781
 GameObject:
   m_ObjectHideFlags: 0

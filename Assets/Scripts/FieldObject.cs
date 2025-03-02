@@ -5,20 +5,19 @@ public class FieldObject : MonoBehaviour
 {
     private BoxCollider object_collider;
     private MeshRenderer object_renderer;
-
-    [SerializeField]
-    [Min(0.1f)]
-    [Tooltip("床の復旧時間")]
-    private float REPAIR_SEC = 3.0f;
-
-    [SerializeField]
-    [Min(0.001f)]
-    [Tooltip("中心からの距離に応じた復旧時間の加算レート")]
-    private float DISTANCE_TIME_RATE = 0.01f;
-
     private bool is_staying_player = false;
     private bool is_active = true;
     private bool is_game_finished = false;
+
+
+    [Tooltip("床の復旧時間"), Min(0.1f)]
+    [SerializeField]
+    private float REPAIR_SEC = 3.0f;
+
+    [Tooltip("中心からの距離に応じた復旧時間の加算レート"), Min(0.001f)]
+    [SerializeField]
+    private float DISTANCE_TIME_RATE = 0.01f;
+
 
     private void Start()
     {
@@ -27,29 +26,37 @@ public class FieldObject : MonoBehaviour
         object_renderer = GetComponent<MeshRenderer>();
     }
 
-    private void ConnectEventAction(bool connect_event)
+    private void ConnectEventAction(bool is_connect_event)
     {
-        if (connect_event)
+        if (is_connect_event)
         {
             AttackObject.BreakEvent += BreakTile;
-            StageManager.TimeUp += SetActiveFalse;
+            StageManager.GameStop += SetActiveFalse;
             StageManager.LeaveScene += PrepareLeaveScene;
             Player.GameOver += SetActiveFalse;
         }
         else
         {
             AttackObject.BreakEvent -= BreakTile;
-            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.GameStop -= SetActiveFalse;
             StageManager.LeaveScene -= PrepareLeaveScene;
             Player.GameOver -= SetActiveFalse;
         }
         return;
     }
 
-    private void PrepareLeaveScene()
+
+    private void Update()
     {
-        ConnectEventAction(false);
-        return;
+        const float STOP_TIME_SCALE = 0.5f;
+        if (Time.timeScale < STOP_TIME_SCALE)
+        {
+            return;
+        }
+        if (is_active && !object_renderer.enabled)
+        {
+            SetFieldActive(true);
+        }
     }
 
     private void SetActiveFalse()
@@ -57,6 +64,14 @@ public class FieldObject : MonoBehaviour
         is_game_finished = true;
         return;
     }
+
+
+    private void PrepareLeaveScene()
+    {
+        ConnectEventAction(false);
+        return;
+    }
+
 
     private void BreakTile(Vector3 break_position, float break_radius)
     {
@@ -105,19 +120,6 @@ public class FieldObject : MonoBehaviour
         if (collider_object.gameObject.layer == PLAYER_LAYER)
         {
             is_staying_player = false;
-        }
-    }
-
-    private void Update()
-    {
-        const float STOP_TIME_SCALE = 0.5f;
-        if (Time.timeScale < STOP_TIME_SCALE)
-        {
-            return;
-        }
-        if (is_active && !object_renderer.enabled)
-        {
-            SetFieldActive(true);
         }
     }
 }

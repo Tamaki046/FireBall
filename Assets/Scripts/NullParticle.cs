@@ -2,14 +2,12 @@ using UnityEngine;
 
 public class Null_Particle : MonoBehaviour
 {
+    [Tooltip("パーティクルの残存時間最小値（秒）"), Range(0.1f,1.0f)]
     [SerializeField]
-    [Range(0.1f,1.0f)]
-    [Tooltip("パーティクルの残存時間最小値（秒）")]
     private float LIFETIME_SEC_MIN;
 
+    [Tooltip("パーティクルの残存時間最大値（秒）"), Range(0.1f,1.0f)]
     [SerializeField]
-    [Range(0.1f,1.0f)]
-    [Tooltip("パーティクルの残存時間最大値（秒）")]
     private float LIFETIME_SEC_MAX;
 
     private bool is_active = true;
@@ -25,13 +23,13 @@ public class Null_Particle : MonoBehaviour
     {
         if (connect_event)
         {
-            StageManager.TimeUp += SetActiveFalse;
+            StageManager.GameStop += SetActiveFalse;
             StageManager.LeaveScene += PrepareLeaveScene;
             Player.GameOver += SetActiveFalse;
         }
         else
         {
-            StageManager.TimeUp -= SetActiveFalse;
+            StageManager.GameStop -= SetActiveFalse;
             StageManager.LeaveScene -= PrepareLeaveScene;
             Player.GameOver -= SetActiveFalse;
         }
