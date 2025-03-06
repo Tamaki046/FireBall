@@ -1,10 +1,10 @@
 using System.Linq;
 using UnityEngine;
 
+//TODO：多重継承発生中
 public class AttackBall : AttackObject
 {
     private float cnt_flare_spark_cycle;
-    private Vector3 core_rotation_velocity;
 
     [SerializeField, Tooltip("火の粉のプレハブ")]
     private GameObject attack_spark_prefab;
@@ -19,27 +19,10 @@ public class AttackBall : AttackObject
     private float no_spark_sec = 0.2f;
 
 
-    protected override void Start()
+    protected override void UpdateOnReady()
     {
-        base.Start();
-        const float MAX_ROTATION_SPEED = 50.0f;
-        core_rotation_velocity = new Vector3(
-                                    Random.Range(-1.0f, 1.0f),
-                                    Random.Range(-1.0f, 1.0f),
-                                    Random.Range(-1.0f, 1.0f)
-                                    ).normalized * MAX_ROTATION_SPEED;
-        return;
-    }
+        base.UpdateOnReady();
 
-
-    protected override void Update()
-    {
-        base.Update();
-        this.transform.localEulerAngles += core_rotation_velocity * Time.deltaTime;
-        if (!is_active)
-        {
-            return;
-        }
         if (no_spark_sec > 0.0f)
         {
             no_spark_sec -= Time.deltaTime;
@@ -48,17 +31,18 @@ public class AttackBall : AttackObject
         {
             cnt_flare_spark_cycle += Time.deltaTime;
             float r = Random.value;
-            if(r <= Mathf.Pow(cnt_flare_spark_cycle/MAX_FLARE_SPARK_CYCLE,3)){
+            // 3乗オーダーぐらいが難易度的に良かった印象？
+            if (r <= Mathf.Pow(cnt_flare_spark_cycle / MAX_FLARE_SPARK_CYCLE, 3))
+            {
                 SpawnFireSpark();
                 cnt_flare_spark_cycle = 0.0f;
             }
-            if(this.transform.position.y <= -10.0f){
+            if (this.transform.position.y <= -10.0f)
+            {
                 base.DestroyThisGameObject();
             }
         }
-        return;
     }
-
 
     protected override void OnCollisionEnter(Collision collision_object)
     {
