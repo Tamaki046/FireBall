@@ -1,9 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
-public class AttackObject : MonoBehaviour
+public class AttackObject : GameObjectBase
 {
-    protected bool is_active = true;
     public static event System.Action<Vector3,float> BreakEvent;
 
     [Tooltip("残存時間"), Range(0.5f,3.0f)]
@@ -17,6 +16,8 @@ public class AttackObject : MonoBehaviour
     protected virtual void Start()
     {
         ConnectEventAction(true);
+        base.TransitionToActing();
+        return;
     }
 
     protected void ConnectEventAction(bool is_connect_event)
@@ -36,18 +37,10 @@ public class AttackObject : MonoBehaviour
     }
 
 
-    protected virtual void Update()
+    protected override void UpdateOnReady()
     {
-        const float STOP_TIME_SCALE = 0.5f;
-        if (Time.timeScale < STOP_TIME_SCALE)
+        if (this.transform.position.y <= -10.0f)
         {
-            return;
-        }
-        if (!is_active)
-        {
-            return;
-        }
-        if(this.transform.position.y <= -10.0f){
             DestroyThisGameObject();
         }
         object_lifetime_sec -= Time.deltaTime;
@@ -55,12 +48,13 @@ public class AttackObject : MonoBehaviour
         {
             DestroyThisGameObject();
         }
+        return;
     }
 
 
     protected virtual void OnCollisionEnter(Collision collision_object)
     {
-        if (is_active)
+        if (base.state == States.ACTING)
         {
             BreakField(this.transform.position);
         }
@@ -89,9 +83,10 @@ public class AttackObject : MonoBehaviour
 
     protected void SetActiveFalse()
     {
+        // オブジェクトの破壊とイベントの実行の順序が前後する場合があるので、
+        // 問題なくゲームが進むようtry-catchで対処
         try
         {
-            is_active = false;
             Rigidbody attack_rigidbody = GetComponent<Rigidbody>();
             attack_rigidbody.linearVelocity = Vector3.zero;
             attack_rigidbody.isKinematic = true;
