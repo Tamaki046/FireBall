@@ -1,25 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-public class AttackObject : MonoBehaviour
+public class AttackParticle : GameObjectBase
 {
-    protected bool is_active = true;
     public static event System.Action<Vector3,float> BreakEvent;
 
     [Tooltip("残存時間"), Range(0.5f,3.0f)]
     [SerializeField]
-    protected float object_lifetime_sec = 1.5f;
+    private float object_lifetime_sec = 1.5f;
 
     [Tooltip("破壊半径"), Range(0.1f,10.0f)]
     [SerializeField]
-    protected float BREAK_RADIUS;
+    private float BREAK_RADIUS;
 
-    protected virtual void Start()
+    private void Start()
     {
         ConnectEventAction(true);
+        base.TransitionToActing();
+        return;
     }
 
-    protected void ConnectEventAction(bool is_connect_event)
+    private void ConnectEventAction(bool is_connect_event)
     {
         if (is_connect_event)
         {
@@ -36,18 +37,10 @@ public class AttackObject : MonoBehaviour
     }
 
 
-    protected virtual void Update()
+    protected override void UpdateOnActing()
     {
-        const float STOP_TIME_SCALE = 0.5f;
-        if (Time.timeScale < STOP_TIME_SCALE)
+        if (this.transform.position.y <= -10.0f)
         {
-            return;
-        }
-        if (!is_active)
-        {
-            return;
-        }
-        if(this.transform.position.y <= -10.0f){
             DestroyThisGameObject();
         }
         object_lifetime_sec -= Time.deltaTime;
@@ -55,12 +48,13 @@ public class AttackObject : MonoBehaviour
         {
             DestroyThisGameObject();
         }
+        return;
     }
 
 
-    protected virtual void OnCollisionEnter(Collision collision_object)
+    private void OnCollisionEnter(Collision collision_object)
     {
-        if (is_active)
+        if (base.state == States.ACTING)
         {
             BreakField(this.transform.position);
         }
@@ -68,12 +62,12 @@ public class AttackObject : MonoBehaviour
         return;
     }
 
-    protected void BreakField(Vector3 break_position)
+    private void BreakField(Vector3 break_position)
     {
         BreakEvent.Invoke(break_position, BREAK_RADIUS);
     }
 
-    protected virtual void DestroyThisGameObject()
+    private void DestroyThisGameObject()
     {
         PrepareLeaveScene();
         Destroy(this.gameObject);
@@ -81,20 +75,22 @@ public class AttackObject : MonoBehaviour
     }
 
 
-    protected void PrepareLeaveScene()
+    private void PrepareLeaveScene()
     {
         ConnectEventAction(false);
         return;
     }
 
-    protected void SetActiveFalse()
+    private void SetActiveFalse()
     {
+        // オブジェクトの破壊とイベントの実行の順序が前後する場合があるので、
+        // 問題なくゲームが進むようtry-catchで対処
         try
         {
-            is_active = false;
             Rigidbody attack_rigidbody = GetComponent<Rigidbody>();
             attack_rigidbody.linearVelocity = Vector3.zero;
             attack_rigidbody.isKinematic = true;
+            base.TransitionToFinished();
         }
         catch (MissingReferenceException)
         {

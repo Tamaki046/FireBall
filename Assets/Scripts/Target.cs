@@ -2,12 +2,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.PlayerLoop;
-public class Target : MonoBehaviour
+public class Target : GameObjectBase
 {
     private bool isDead = false;
     private GameObject PLAYER_GAMEOBJECT;
     private float cnt_shot_cycle = 0.0f;
-    private bool is_active = true;
     public static event System.Action<Vector3> DeadEvent;
 
     private const string SE_PREFS_KEY = "SEVolume";
@@ -76,6 +75,7 @@ public class Target : MonoBehaviour
         PLAYER_GAMEOBJECT = GameObject.FindWithTag(PLAYER_TAG);
         ConnectEventAction(true);
         cnt_shot_cycle = CalcShotCycle();
+        base.TransitionToActing();
     }
 
     private void ConnectEventAction(bool is_connect_event)
@@ -101,24 +101,17 @@ public class Target : MonoBehaviour
     }
 
 
-    private void Update()
+    protected override void UpdateOnActing()
     {
-        const float STOP_TIME_BORDER = 0.5f;
-        if (Time.timeScale < STOP_TIME_BORDER)
+        LookAtPlayer();
+        ChasePlayer();
+        cnt_shot_cycle -= Time.deltaTime;
+        if (cnt_shot_cycle <= 0.0f)
         {
-            return;
+            ShotFireBall();
+            cnt_shot_cycle += CalcShotCycle();
         }
-        if (is_active)
-        {
-            LookAtPlayer();
-            ChasePlayer();
-            cnt_shot_cycle -= Time.deltaTime;
-            if (cnt_shot_cycle <= 0.0f)
-            {
-                ShotFireBall();
-                cnt_shot_cycle += CalcShotCycle();
-            }
-        }
+        return;
     }
 
     private void LookAtPlayer()
@@ -181,7 +174,7 @@ public class Target : MonoBehaviour
 
     private void SetActiveFalse()
     {
-        is_active = false;
+        base.TransitionToFinished();
         return;
     }
 

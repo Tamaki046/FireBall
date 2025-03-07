@@ -296,13 +296,15 @@ public class StageManager : MonoBehaviour
     {
         if (is_connect_event)
         {
-            AttackObject.BreakEvent += GenerateBreakEffect;
+            AttackParticle.BreakEvent += GenerateBreakEffect;
+            AttackBall.BreakEvent += GenerateBreakEffect;
             Target.DeadEvent += DeadTarget;
             Player.GameOver += FinishGame;
         }
         else
         {
-            AttackObject.BreakEvent -= GenerateBreakEffect;
+            AttackParticle.BreakEvent -= GenerateBreakEffect;
+            AttackBall.BreakEvent -= GenerateBreakEffect;
             Target.DeadEvent -= DeadTarget;
             Player.GameOver -= FinishGame;
         }

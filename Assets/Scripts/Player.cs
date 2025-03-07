@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Player : MonoBehaviour
+public class Player : GameObjectBase
 {
     private Rigidbody player_rigidbody;
     private CharacterController character_controller;
@@ -13,8 +13,6 @@ public class Player : MonoBehaviour
     private bool is_knockbacking = false;
     private bool is_hittable = true;
     private Vector3 knockback_velocity = Vector3.zero;
-    private bool is_game_started = false;
-    private bool is_game_finished = false;
     public static event System.Action GameOver;
 
     private const string PLAYER_CAMERA_TAG = "PlayerCamera";
@@ -93,6 +91,7 @@ public class Player : MonoBehaviour
         SetupGameObjectsAndComponents();
         ConnectEventAction(true);
         this.gameObject.transform.position = new Vector3(0.0f, 2.0f, 0.0f);
+        base.TransitionToReady();
     }
 
     private void SetupGameObjectsAndComponents()
@@ -122,37 +121,33 @@ public class Player : MonoBehaviour
         return;
     }
 
-    private void Update()
-    {
-        const float STOP_TIME_BORDER = 0.5f;
-        if (Time.timeScale < STOP_TIME_BORDER)
-        {
-            return;
-        }
-        if (is_game_finished)
-        {
-            return;
-        }
-        else if (!is_game_started)
-        {
-            MoveOnlyGravity();
-            return;
-        }
 
+    protected override void UpdateOnReady()
+    {
+        MoveOnlyGravity();
+        return;
+    }
+
+    private void MoveOnlyGravity()
+    {
+        Vector3 velocity = Vector3.zero;
+        if (!character_controller.isGrounded)
+        {
+            velocity.y += Physics.gravity.y;
+        }
+        character_controller.Move(velocity * Time.deltaTime);
+        return;
+    }
+
+
+    protected override void UpdateOnActing()
+    {
         MoveCamera();
 
         if (is_knockbacking)
         {
             ShakeCamera();
-            if (!character_controller.isGrounded)
-            {
-                knockback_velocity.y += Physics.gravity.y * Time.deltaTime;
-            }
-            else
-            {
-                knockback_velocity = Vector3.zero;
-            }
-            character_controller.Move(knockback_velocity * Time.deltaTime);
+            MoveByKnockBack();
         }
         else
         {
@@ -170,6 +165,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
         if (this.transform.position.y <= DROP_POSITION_Y)
         {
             PlaySE(FALL_SE_CLIP, FALL_SE_BASE_VOLUME);
@@ -178,6 +174,19 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void MoveByKnockBack()
+    {
+        if (!character_controller.isGrounded)
+        {
+            knockback_velocity.y += Physics.gravity.y * Time.deltaTime;
+        }
+        else
+        {
+            knockback_velocity = Vector3.zero;
+        }
+        character_controller.Move(knockback_velocity * Time.deltaTime);
+        return;
+    }
 
     private void MoveCharacter(){
         Vector3 front_back_input = this.transform.forward * Input.GetAxis("Vertical");
@@ -190,18 +199,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    private void MoveOnlyGravity()
-    {
-        Vector3 velocity = Vector3.zero;
-        if (!character_controller.isGrounded)
-        {
-            velocity.y += Physics.gravity.y;
-        }
-        character_controller.Move(velocity * Time.deltaTime);
-        return;
-    }
-
-    private void KnockBack(Vector3 hit_direction)
+    private void CauseKnockBack(Vector3 hit_direction)
     {
         player_light.color = FAINTING_LIGHT_COLOR;
         is_knockbacking = true;
@@ -315,7 +313,7 @@ public class Player : MonoBehaviour
 
     private void StartGame()
     {
-        is_game_started = true;
+        base.TransitionToActing();
         return;
     }
 
@@ -327,7 +325,7 @@ public class Player : MonoBehaviour
 
     private void SetActiveFalse()
     {
-        is_game_finished = true; 
+        base.TransitionToFinished();
         player_rigidbody.linearVelocity = Vector3.zero;
         player_rigidbody.isKinematic = true;
         return;
@@ -340,7 +338,7 @@ public class Player : MonoBehaviour
         if (collision_object.gameObject.layer == ENEMY_BALL_LAYERS && is_hittable)
         {
             is_hittable = false;
-            KnockBack(collision_object.transform.position - this.transform.position);
+            CauseKnockBack(collision_object.transform.position - this.transform.position);
         }
     }
 
