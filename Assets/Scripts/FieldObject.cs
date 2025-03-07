@@ -29,14 +29,16 @@ public class FieldObject : GameObjectBase
     {
         if (is_connect_event)
         {
-            AttackObject.BreakEvent += BreakTile;
+            AttackParticle.BreakEvent += BreakTile;
+            AttackBall.BreakEvent += BreakTile;
             StageManager.GameStop += SetActiveFalse;
             StageManager.LeaveScene += PrepareLeaveScene;
             Player.GameOver += SetActiveFalse;
         }
         else
         {
-            AttackObject.BreakEvent -= BreakTile;
+            AttackParticle.BreakEvent -= BreakTile;
+            AttackBall.BreakEvent -= BreakTile;
             StageManager.GameStop -= SetActiveFalse;
             StageManager.LeaveScene -= PrepareLeaveScene;
             Player.GameOver -= SetActiveFalse;
