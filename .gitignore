@@ -75,3 +75,4 @@ crashlytics-build.properties
 # My Setting
 /[Aa]ssets/Fonts/*
 /[Aa]ssets/Sounds/*
+/[Aa]ssets/Images/FreeSources/*
