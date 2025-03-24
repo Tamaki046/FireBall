@@ -24,6 +24,7 @@ public class TitleSceneManager : MonoBehaviour
     private Slider camera_sensitivity_slider;
     private TextMeshProUGUI camera_sensitivity_label;
 
+    private bool is_opening_somewindow = false;
     private bool is_setting = false;
     private bool is_starting = false;
 
@@ -33,6 +34,7 @@ public class TitleSceneManager : MonoBehaviour
     private const string SLIDER_LABEL_TAG = "SliderLabel";
     private const string SETTING_WINDOW_TAG = "SettingWindow";
     private const string RULE_WINDOW_TAG = "RuleWindow";
+    private const string QUIT_WINDOW_TAG = "QuitWindow";
     private const string RANKING_TEXT_TAG = "RankingScoreText";
 
     private const string BGM_PREFS_KEY = "BGMVolume";
@@ -199,6 +201,7 @@ public class TitleSceneManager : MonoBehaviour
     {
         if (!is_starting)
         {
+            is_opening_somewindow = true;
             DisplayWindow(tag, true);
             if (tag == SETTING_WINDOW_TAG)
             {
@@ -211,6 +214,7 @@ public class TitleSceneManager : MonoBehaviour
 
     public void ExitWindow(string tag)
     {
+        is_opening_somewindow = false;
         DisplayWindow(tag, false);
         if (tag == SETTING_WINDOW_TAG)
         {
@@ -232,9 +236,20 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
+
+    #if UNITY_STANDALONE_WIN
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && !is_opening_somewindow)
+        {
+            OpenWindow(QUIT_WINDOW_TAG);
+        }
+    }
+
     public void QuitGame()
     {
         Application.Quit();
         return;
     }
+    #endif
 }

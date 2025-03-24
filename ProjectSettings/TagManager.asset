@@ -21,6 +21,7 @@ TagManager:
   - PlayerCamera
   - FinishUI
   - PlayerLight
+  - QuitWindow
   layers:
   - Default
   - TransparentFX
