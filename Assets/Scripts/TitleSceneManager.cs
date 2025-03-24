@@ -65,6 +65,7 @@ public class TitleSceneManager : MonoBehaviour
     {
         FindAllSliderObjects();
         SetupAllScrollberValues();
+        InitializeSoundPrefs();
         LoadScoreRanking();
         HideSettingAndRuleWindows();
         return;
@@ -141,6 +142,22 @@ public class TitleSceneManager : MonoBehaviour
         return;
     }
 
+    private void InitializeSoundPrefs()
+    {
+        if (!PlayerPrefs.HasKey(BGM_PREFS_KEY))
+        {
+            PlayerPrefs.SetFloat(BGM_PREFS_KEY, 1.0f);
+        }
+        if (!PlayerPrefs.HasKey(SE_PREFS_KEY))
+        {
+            PlayerPrefs.SetFloat(SE_PREFS_KEY, 1.0f);
+        }
+        if (!PlayerPrefs.HasKey(CAMERA_PREFS_KEY))
+        {
+            PlayerPrefs.SetFloat(CAMERA_PREFS_KEY, 0.5f);
+        }
+        return;
+    }
 
     public void LoadAllSliderValues()
     {

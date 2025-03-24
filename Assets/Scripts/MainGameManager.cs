@@ -311,7 +311,6 @@ public class StageManager : MonoBehaviour
         return;
     }
 
-
     private void Update()
     {
         TransitionPauseState();
