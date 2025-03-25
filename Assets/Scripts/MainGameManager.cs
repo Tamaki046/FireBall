@@ -442,7 +442,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = bgm_clip;
-        audio_source.volume = bgm_volume * PlayerPrefs.GetFloat(BGM_PREFS_KEY);
+        audio_source.volume = bgm_volume * PlayerPrefs.GetFloat(BGM_PREFS_KEY, 1.0f);
         audio_source.loop = true;
         audio_source.Play();
         return;
@@ -455,7 +455,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = se_clip;
-        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY, 1.0f);
         float blend_3d = 0.0f;
         if (is_3d)
         {
@@ -475,7 +475,7 @@ public class StageManager : MonoBehaviour
 
         AudioSource audio_source = audio_object.AddComponent<AudioSource>();
         audio_source.clip = se_clip;
-        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY);
+        audio_source.volume = se_volume * PlayerPrefs.GetFloat(SE_PREFS_KEY, 1.0f);
         const float SOUND_2D = 0.0f;
         audio_source.spatialBlend = SOUND_2D;
         audio_source.Play();
